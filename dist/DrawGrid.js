@@ -3,7 +3,7 @@ var Direction;
     Direction[Direction["Vertical"] = 0] = "Vertical";
     Direction[Direction["Horizontal"] = 1] = "Horizontal";
 })(Direction || (Direction = {}));
-function DrawGrid(context, offset, gridSettings = {
+function drawGrid(context, offset, gridSettings = {
     gridSize: 25,
     thinLineColor: '#ddd',
     thinLineWidth: 0.5,
@@ -48,4 +48,4 @@ function DrawGrid(context, offset, gridSettings = {
     // 繪製水平線
     drawLines(Direction.Horizontal);
 }
-export default DrawGrid;
+export default drawGrid;

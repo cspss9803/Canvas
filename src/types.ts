@@ -16,6 +16,12 @@ export interface BoundingBox {
     height: number
 }
 
+export interface BoundingBoxStyle {
+    thickness: number
+    radius: number
+    color: Color
+}
+
 export interface BoundingEdges {
     minX: number;
     maxX: number;

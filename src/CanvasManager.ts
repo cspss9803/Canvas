@@ -68,38 +68,40 @@ export class CanvasManager {
     }
 
     startMove( event: MouseEvent ) {
+    
         if ( event.button !== MouseButton.Left ) return;
     
         const clientX = event.clientX
         const clientY = event.clientY
+
+        this.start.x = clientX - this.offset.x
+        this.start.y = clientY - this.offset.y
     
-        const mouseX = clientX - this.offset.x;
-        const mouseY = clientY - this.offset.y;
-    
-        this.start.x = clientX - this.offset.x;
-        this.start.y = clientY - this.offset.y;
+        const mouseX = this.start.x
+        const mouseY = this.start.y
     
         // 如果正在選取模式中
         if ( this.interactionMode === InteractionMode.Selecting ) {
     
             // 從最頂層的物件開始遍歷
-            for (const object of [...this.objects].reverse()) {
+            for ( const object of [...this.objects].reverse() ) {
     
-                if (object.containsPoint( { x: clientX, y: clientY }, this.offset )) {
+                const point = { x: clientX, y: clientY }
+
+                // 按下的點在剛好在物件上
+                if ( object.containsPoint( point, this.offset ) ) {
     
-                    // 按下的點在剛好在物件上
                     this.isClickOnObject = true
-                    // this.selectedObject = object
-                    if (!this.selectedObjects.includes(object)) { this.selectedObjects = [object] }
-    
                     this.dragOffsets.clear()
-                    for (const object of this.selectedObjects) {
-                        this.dragOffsets.set(object, {
+
+                    if ( !this.selectedObjects.includes( object ) ) this.selectedObjects = [ object ]
+    
+                    for ( const object of this.selectedObjects ) {
+                        this.dragOffsets.set( object, {
                             x: mouseX - object.position.x,
                             y: mouseY - object.position.y
                         })
                     }
-    
                     break
                 }
             }
@@ -120,29 +122,39 @@ export class CanvasManager {
         // 如果正在移動模式中
         if ( this.interactionMode === InteractionMode.Moving ) { this.selectedObjects = [] }
     
-        this.isDragging = true;
+        this.isDragging = true
         this.updateCursor()
         draw( this )
     }
 
     moving( event: MouseEvent ) {
-        if (!this.isDragging) return;
+
+        if ( !this.isDragging ) return
     
-        const clientX = event.clientX;
-        const clientY = event.clientY;
+        const clientX = event.clientX
+        const clientY = event.clientY
     
         // 如果正在選取模式中
         if ( this.interactionMode === InteractionMode.Selecting ) {
-            const mouseX = clientX - this.offset.x;
-            const mouseY = clientY - this.offset.y;
+            const mouseX = clientX - this.offset.x
+            const mouseY = clientY - this.offset.y
+
+            // 如果正在進行框選的話
             if ( this.selectionStart ) {
-                this.selectionEnd = { x: clientX, y: clientY };
-            } else {
-                for (const object of this.selectedObjects) {
-                    const offsetForShape = this.dragOffsets.get(object);
-                    if (offsetForShape) {
-                        object.position.x = mouseX - offsetForShape.x;
-                        object.position.y = mouseY - offsetForShape.y;
+
+                // 那就持續更新結束點的位置
+                this.selectionEnd = { x: clientX, y: clientY }
+            } 
+            
+            // 如果沒有在進行框選的話
+            else {
+
+                // 移動所有被選取的物件
+                for ( const object of this.selectedObjects ) {
+                    const offsetForShape = this.dragOffsets.get( object )
+                    if ( offsetForShape ) {
+                        object.position.x = mouseX - offsetForShape.x
+                        object.position.y = mouseY - offsetForShape.y
                     }
                 }
             }
@@ -166,9 +178,11 @@ export class CanvasManager {
     }
 
     cancelMove(event: MouseEvent) {
-        if (this.isDragging && this.selectionStart && this.selectionEnd) {
-            this.selectedObjects = [];
 
+        // 如果正在框選的話
+        if ( this.isDragging && this.selectionStart && this.selectionEnd ) {
+
+            this.selectedObjects = []
             const selectionEdges: BoundingEdges = {
                 minX: Math.min(this.selectionStart.x, this.selectionEnd.x),
                 maxX: Math.max(this.selectionStart.x, this.selectionEnd.x),
@@ -176,22 +190,26 @@ export class CanvasManager {
                 maxY: Math.max(this.selectionStart.y, this.selectionEnd.y)
             } 
     
-            for (const object of this.objects) {
+            for ( const object of this.objects ) {
 
-                if ( isObjectWouldBeSelected( object, selectionEdges, this.offset, SelectionMode.Intersect ) ) {
-                    this.selectedObjects.push(object);
-                }
+                if ( 
+                    isObjectWouldBeSelected( 
+                        object, 
+                        selectionEdges, 
+                        this.offset, 
+                        SelectionMode.Intersect 
+                    ) 
+                ) this.selectedObjects.push( object )
             }
         }
     
-        this.isDragging = false;
-        this.isClickOnObject = false;
-        this.selectionStart = null;
-        this.selectionEnd = null;
-        this.updateCursor();
-        draw(this);
+        this.isDragging = false
+        this.isClickOnObject = false
+        this.selectionStart = null
+        this.selectionEnd = null
+        this.updateCursor()
+        draw( this )
     }
-    
 
     keyboardHandle( event: KeyboardEvent ) {
 

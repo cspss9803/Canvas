@@ -1,4 +1,4 @@
-export function drawHighlight(ctx, objects, offset) {
+export function drawBoundingBox(ctx, objects, offset) {
     // 如果沒有選取任何物件，則不繪製
     if (objects.length === 0)
         return;
@@ -13,6 +13,8 @@ export function drawHighlight(ctx, objects, offset) {
         minY = Math.min(minY, box.y);
         maxX = Math.max(maxX, box.x + box.width);
         maxY = Math.max(maxY, box.y + box.height);
+        // 繪製單個物件的外框
+        drawRoundedBox(ctx, box, offset, { thickness: 3, radius: 3, color: 'rgb(0, 183, 255)' });
     }
     // 彙整出來的最終 Bounding Box
     const totalBox = {
@@ -21,16 +23,20 @@ export function drawHighlight(ctx, objects, offset) {
         width: maxX - minX,
         height: maxY - minY,
     };
-    const lineWidth = 3;
-    const radius = 3;
+    drawRoundedBox(ctx, totalBox, offset, { thickness: 3, radius: 3, color: 'rgb(0, 85, 255)' });
+}
+function drawRoundedBox(ctx, box, offset, style) {
+    const thickness = style.thickness;
+    const radius = style.radius;
+    const color = style.color;
     ctx.save();
     ctx.translate(offset.x, offset.y);
-    ctx.strokeStyle = 'rgb(0, 106, 255)';
-    ctx.lineWidth = lineWidth;
-    const x = totalBox.x - lineWidth / 2;
-    const y = totalBox.y - lineWidth / 2;
-    const width = totalBox.width + lineWidth;
-    const height = totalBox.height + lineWidth;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = thickness;
+    const x = box.x - thickness / 2;
+    const y = box.y - thickness / 2;
+    const width = box.width + thickness;
+    const height = box.height + thickness;
     ctx.beginPath();
     ctx.moveTo(x + radius, y);
     ctx.lineTo(x + width - radius, y);
