@@ -23,7 +23,7 @@ export interface GridSettings {
 
 enum Direction { Vertical, Horizontal }
 
-function DrawGrid( context: CanvasRenderingContext2D, offset: Vector2, gridSettings: GridSettings = {
+function drawGrid( context: CanvasRenderingContext2D, offset: Vector2, gridSettings: GridSettings = {
     gridSize: 25,
     thinLineColor: '#ddd',
     thinLineWidth: 0.5,
@@ -83,4 +83,4 @@ function DrawGrid( context: CanvasRenderingContext2D, offset: Vector2, gridSetti
 
 }
 
-export default DrawGrid
+export default drawGrid
