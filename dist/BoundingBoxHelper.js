@@ -48,6 +48,15 @@ export function isBoundingBoxIntersectSelection(bbox, selectionEdges, offset) {
         realMinY > selectionEdges.maxY // 物件在選取框下方
     );
 }
+/**
+ * 判斷物件是否會被選取
+ * @param object 要選取的物件
+ * @param selectionEdges 選取框的範圍
+ * @param offset 畫布的偏移量
+ * @param mode 框選的選取模式 完全包含才選取 or 只要有相交就選取
+ *
+ * @returns
+ */
 export function isObjectWouldBeSelected(object, selectionEdges, offset, mode) {
     const bbox = object.getBoundingBox(offset);
     const { minX, minY, maxX, maxY } = getBoundingEdges(bbox);
