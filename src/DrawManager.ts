@@ -5,7 +5,7 @@ import { CanvasManager } from './CanvasManager.js'
 export function draw( canvasManager: CanvasManager ) {
     const ctx = canvasManager.ctx
     const canvas = canvasManager.canvas
-    const offset = canvasManager.offset
+    const viewPostiion = canvasManager.viewPostiion
     const objects = canvasManager.objects
     const selectedObjects = canvasManager.selectedObjects
     const selectionStart = canvasManager.selectionStart
@@ -15,13 +15,13 @@ export function draw( canvasManager: CanvasManager ) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // 先繪製底部的格線
-    drawGrid( ctx, offset )
+    drawGrid( ctx, viewPostiion )
 
     // 再繪製所有物件
-    for ( const object of objects ) { object.draw(ctx, offset) }
+    for ( const object of objects ) { object.draw(ctx, viewPostiion) }
 
     // 繪製被選取物件們的選取框
-    drawBoundingBox( ctx, selectedObjects, offset )
+    drawBoundingBox( ctx, selectedObjects, viewPostiion )
 
     // 如果有選取框，則繪製選取框
     if ( selectionStart && selectionEnd ) {
