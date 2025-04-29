@@ -29,7 +29,7 @@ export class CanvasManager {
         else {
             throw new Error('Canvas is not supported');
         }
-        this.offset = { x: 0, y: 0 };
+        this.viewPostiion = { x: 0, y: 0 };
         this.start = { x: 0, y: 0 };
         this.isDrawedInThisFrame = false;
         window.addEventListener('contextmenu', event => event.preventDefault());
@@ -45,8 +45,8 @@ export class CanvasManager {
             return;
         const clientX = event.clientX;
         const clientY = event.clientY;
-        this.start.x = clientX - this.offset.x;
-        this.start.y = clientY - this.offset.y;
+        this.start.x = clientX - this.viewPostiion.x;
+        this.start.y = clientY - this.viewPostiion.y;
         const mouseX = this.start.x;
         const mouseY = this.start.y;
         // 如果正在選取模式中
@@ -55,7 +55,7 @@ export class CanvasManager {
             for (const object of [...this.objects].reverse()) {
                 const point = { x: clientX, y: clientY };
                 // 真的有物件被點擊到的話
-                if (object.containsPoint(point, this.offset)) {
+                if (object.containsPoint(point, this.viewPostiion)) {
                     this.isClickOnObject = true;
                     // 在長按著 Shift 鍵時，點到這個物件的話
                     if (event.shiftKey) {
@@ -115,8 +115,8 @@ export class CanvasManager {
         const clientY = event.clientY;
         // 如果正在選取模式中
         if (this.interactionMode === InteractionMode.Selecting) {
-            const mouseX = clientX - this.offset.x;
-            const mouseY = clientY - this.offset.y;
+            const mouseX = clientX - this.viewPostiion.x;
+            const mouseY = clientY - this.viewPostiion.y;
             // 如果正在進行框選的話
             if (this.selectionStart) {
                 // 那就持續更新結束點的位置
@@ -136,8 +136,8 @@ export class CanvasManager {
         }
         // 如果正在移動模式中
         if (this.interactionMode === InteractionMode.Moving) {
-            this.offset.x = clientX - this.start.x;
-            this.offset.y = clientY - this.start.y;
+            this.viewPostiion.x = clientX - this.start.x;
+            this.viewPostiion.y = clientY - this.start.y;
         }
         // 如果這一幀還沒有被繪製過，才能進行繪製
         if (!this.isDrawedInThisFrame) {
@@ -163,7 +163,7 @@ export class CanvasManager {
                 this.selectedObjects = [];
             // 尋找所有 (完全在選取範圍內|有碰觸到選取範圍) 的物件
             for (const object of this.objects) {
-                if (isObjectWouldBeSelected(object, selectionEdges, this.offset, SelectionMode.Intersect)) {
+                if (isObjectWouldBeSelected(object, selectionEdges, this.viewPostiion, SelectionMode.Intersect)) {
                     // 如果這個物件尚未在選取清單中，才新增進選取清單
                     if (!this.selectedObjects.includes(object)) {
                         this.selectedObjects.push(object);
@@ -218,18 +218,4 @@ export class CanvasManager {
         }
     }
     draw() { draw(this); }
-    clearSelection() {
-        this.selectedObjects = [];
-        this.dragOffsets.clear();
-    }
-    initializeDragOffsets(mouseX, mouseY) {
-        for (const object of this.selectedObjects) {
-            if (!this.dragOffsets.has(object)) {
-                this.dragOffsets.set(object, {
-                    x: mouseX - object.position.x,
-                    y: mouseY - object.position.y,
-                });
-            }
-        }
-    }
 }

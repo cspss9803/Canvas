@@ -13,7 +13,7 @@ export class CanvasManager {
     ctx: CanvasRenderingContext2D
 
     /** 視角位置 */
-    offset: Vector2
+    viewPostiion: Vector2
 
     /** 點擊畫布的起始位置 */
     start: Vector2
@@ -54,7 +54,7 @@ export class CanvasManager {
         if ( ctx !== null ) { this.ctx = ctx }
         else { throw new Error('Canvas is not supported') }
         
-        this.offset = { x: 0, y: 0 }
+        this.viewPostiion = { x: 0, y: 0 }
         this.start = { x: 0, y: 0 }
         this.isDrawedInThisFrame = false
 
@@ -73,8 +73,8 @@ export class CanvasManager {
         const clientX = event.clientX;
         const clientY = event.clientY;
     
-        this.start.x = clientX - this.offset.x;
-        this.start.y = clientY - this.offset.y;
+        this.start.x = clientX - this.viewPostiion.x;
+        this.start.y = clientY - this.viewPostiion.y;
     
         const mouseX = this.start.x;
         const mouseY = this.start.y;
@@ -87,7 +87,7 @@ export class CanvasManager {
                 const point = { x: clientX, y: clientY };
     
                 // 真的有物件被點擊到的話
-                if (object.containsPoint(point, this.offset)) {
+                if (object.containsPoint(point, this.viewPostiion)) {
                     this.isClickOnObject = true
     
                     // 在長按著 Shift 鍵時，點到這個物件的話
@@ -163,8 +163,8 @@ export class CanvasManager {
     
         // 如果正在選取模式中
         if ( this.interactionMode === InteractionMode.Selecting ) {
-            const mouseX = clientX - this.offset.x
-            const mouseY = clientY - this.offset.y
+            const mouseX = clientX - this.viewPostiion.x
+            const mouseY = clientY - this.viewPostiion.y
 
             // 如果正在進行框選的話
             if ( this.selectionStart ) {
@@ -190,8 +190,8 @@ export class CanvasManager {
         
         // 如果正在移動模式中
         if ( this.interactionMode === InteractionMode.Moving ) {
-            this.offset.x = clientX - this.start.x;
-            this.offset.y = clientY - this.start.y;
+            this.viewPostiion.x = clientX - this.start.x;
+            this.viewPostiion.y = clientY - this.start.y;
         }
     
         // 如果這一幀還沒有被繪製過，才能進行繪製
@@ -226,7 +226,7 @@ export class CanvasManager {
                     isObjectWouldBeSelected(
                         object,
                         selectionEdges,
-                        this.offset,
+                        this.viewPostiion,
                         SelectionMode.Intersect
                     )
                 ) {
@@ -295,20 +295,5 @@ export class CanvasManager {
     }
 
     draw() { draw( this ) }
-
-    private clearSelection() {
-        this.selectedObjects = [];
-        this.dragOffsets.clear();
-    }
     
-    private initializeDragOffsets(mouseX: number, mouseY: number) {
-        for (const object of this.selectedObjects) {
-            if (!this.dragOffsets.has(object)) {
-                this.dragOffsets.set(object, {
-                    x: mouseX - object.position.x,
-                    y: mouseY - object.position.y,
-                });
-            }
-        }
-    }
 }
