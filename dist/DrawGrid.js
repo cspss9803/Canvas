@@ -3,7 +3,7 @@ var Direction;
     Direction[Direction["Vertical"] = 0] = "Vertical";
     Direction[Direction["Horizontal"] = 1] = "Horizontal";
 })(Direction || (Direction = {}));
-function drawGrid(context, offset, gridSettings = {
+function drawGrid(context, viewPostiion, gridSettings = {
     gridSize: 25,
     thinLineColor: '#ddd',
     thinLineWidth: 0.5,
@@ -19,7 +19,7 @@ function drawGrid(context, offset, gridSettings = {
         // 代表畫布的寬度或高度，取決於當前繪製的方向
         const max = isVertical ? canvas.width : canvas.height;
         // 計算偏移值，根據當前繪製的方向選擇 x 或 y 偏移值
-        const offsetValue = isVertical ? offset.x : offset.y;
+        const offsetValue = isVertical ? viewPostiion.x : viewPostiion.y;
         for (let pos = offsetValue % gridSize; pos < max; pos += gridSize) {
             const absPos = pos - offsetValue;
             // 判斷是否為粗線

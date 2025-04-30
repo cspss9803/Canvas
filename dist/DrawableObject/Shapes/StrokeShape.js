@@ -16,7 +16,7 @@ export class StrokeShape extends DrawableObject {
         this.renderStroke(ctx);
         ctx.restore();
     }
-    containsPoint(point, offset) {
+    isHit(point, offset) {
         const localX = point.x - offset.x;
         const localY = point.y - offset.y;
         return this.isPointNearStroke(localX, localY);

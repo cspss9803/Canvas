@@ -1,10 +1,10 @@
 import { CanvasManager } from './CanvasManager.js';
 import { Box, Circle, Line } from './DrawableObject/Shapes/index.js';
 const canvasManager = new CanvasManager(document.getElementById('canvas'));
-canvasManager.objects.push(new Box({ x: 50, y: 150 }, { width: 50, height: 50 }, '#ccc'));
-canvasManager.objects.push(new Box({ x: 200, y: 50 }, { width: 100, height: 100 }, "rgba(255, 0, 0, 0.5)"));
-canvasManager.objects.push(new Circle({ x: 400, y: 200 }, 60, '#fa0'));
-canvasManager.objects.push(new Box({ x: 400, y: 300 }, { width: 150, height: 150 }, 'rgba(0, 255, 0, 0.7)'));
-canvasManager.objects.push(new Box({ x: 600, y: 100 }, { width: 50, height: 200 }));
-canvasManager.objects.push(new Line({ x: 600, y: 400 }, [{ x: 700, y: 500 }, { x: 800, y: 400 }], '#000', 5));
-canvasManager.draw();
+canvasManager.canvasObjects.push(new Box({ x: 50, y: 150 }, { width: 50, height: 50 }, '#ccc'));
+canvasManager.canvasObjects.push(new Box({ x: 200, y: 50 }, { width: 100, height: 100 }, "rgba(255, 0, 0, 0.5)"));
+canvasManager.canvasObjects.push(new Circle({ x: 400, y: 200 }, 60, '#fa0'));
+canvasManager.canvasObjects.push(new Box({ x: 400, y: 300 }, { width: 150, height: 150 }, 'rgba(0, 255, 0, 0.7)'));
+canvasManager.canvasObjects.push(new Box({ x: 600, y: 100 }, { width: 50, height: 200 }));
+canvasManager.canvasObjects.push(new Line({ x: 600, y: 400 }, [{ x: 700, y: 500 }, { x: 800, y: 400 }], '#000', 5));
+canvasManager.drawManager.draw();

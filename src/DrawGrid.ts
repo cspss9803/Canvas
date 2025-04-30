@@ -23,7 +23,7 @@ export interface GridSettings {
 
 enum Direction { Vertical, Horizontal }
 
-function drawGrid( context: CanvasRenderingContext2D, offset: Vector2, gridSettings: GridSettings = {
+function drawGrid( context: CanvasRenderingContext2D, viewPostiion: Vector2, gridSettings: GridSettings = {
     gridSize: 25,
     thinLineColor: '#ddd',
     thinLineWidth: 0.5,
@@ -43,7 +43,7 @@ function drawGrid( context: CanvasRenderingContext2D, offset: Vector2, gridSetti
         const max = isVertical ? canvas.width : canvas.height;
 
         // 計算偏移值，根據當前繪製的方向選擇 x 或 y 偏移值
-        const offsetValue = isVertical ? offset.x : offset.y;
+        const offsetValue = isVertical ? viewPostiion.x : viewPostiion.y;
 
         for (let pos = offsetValue % gridSize; pos < max; pos += gridSize) {
             const absPos = pos - offsetValue;

@@ -11,7 +11,7 @@ export class Shape extends DrawableObject {
         this.renderShape(ctx);
         ctx.restore();
     }
-    containsPoint(point, offset) {
+    isHit(point, offset) {
         const localX = point.x - offset.x;
         const localY = point.y - offset.y;
         return this.isPointInside(localX, localY);

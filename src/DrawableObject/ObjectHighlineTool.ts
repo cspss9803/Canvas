@@ -4,7 +4,7 @@ import type { Vector2, BoundingBox, BoundingBoxStyle } from '../types.js'
 export function drawBoundingBox(
     ctx: CanvasRenderingContext2D, 
     objects: DrawableObject[], 
-    offset: Vector2
+    viewPostiion: Vector2
 ) {
     // 如果沒有選取任何物件，則不繪製
     if ( objects.length === 0 ) return
@@ -16,7 +16,7 @@ export function drawBoundingBox(
     let maxY = -Infinity
 
     for ( const object of objects ) {
-        const box = object.getBoundingBox( offset )
+        const box = object.getBoundingBox( viewPostiion )
         minX = Math.min( minX, box.x )
         minY = Math.min( minY, box.y )
         maxX = Math.max( maxX, box.x + box.width )
@@ -26,7 +26,7 @@ export function drawBoundingBox(
         drawRoundedBox(
             ctx, 
             box, 
-            offset,
+            viewPostiion,
             { thickness: 3, radius: 3, color: 'rgb(0, 183, 255)' }
         )
     }
@@ -42,7 +42,7 @@ export function drawBoundingBox(
     drawRoundedBox(
         ctx, 
         totalBox, 
-        offset,
+        viewPostiion,
         { thickness: 3, radius: 3, color: 'rgb(0, 85, 255)' }
     )
 }
