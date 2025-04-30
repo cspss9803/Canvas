@@ -3,10 +3,13 @@ export class ViewportManager {
     constructor(canvasManager) {
         this.canvasManager = canvasManager;
     }
-    moveViewport(clientX, clientY) {
-        if (this.canvasManager.interactionMode !== InteractionMode.Moving)
+    moveViewport(screenMousePosition) {
+        const interactionMode = this.canvasManager.interactionMode;
+        const viewPosition = this.canvasManager.viewPosition;
+        const startPosition = this.canvasManager.startPosition;
+        if (interactionMode !== InteractionMode.Moving)
             return;
-        this.canvasManager.viewPostiion.x = clientX - this.canvasManager.startPosition.x;
-        this.canvasManager.viewPostiion.y = clientY - this.canvasManager.startPosition.y;
+        viewPosition.x = screenMousePosition.x - startPosition.x;
+        viewPosition.y = screenMousePosition.y - startPosition.y;
     }
 }
