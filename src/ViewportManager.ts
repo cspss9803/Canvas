@@ -1,5 +1,6 @@
 import { CanvasManager } from './CanvasManager.js'
 import { InteractionMode } from './types.js'
+import type { Vector2 } from './types.js'
 
 export class ViewportManager {
 
@@ -9,10 +10,13 @@ export class ViewportManager {
         this.canvasManager = canvasManager 
     }
 
-    moveViewport(clientX: number, clientY: number) {
+    moveViewport( screenMousePosition: Vector2 ) {
+        const interactionMode = this.canvasManager.interactionMode;
+        const viewPosition = this.canvasManager.viewPosition;
+        const startPosition = this.canvasManager.startPosition;
 
-        if ( this.canvasManager.interactionMode !== InteractionMode.Moving ) return;
-        this.canvasManager.viewPostiion.x = clientX - this.canvasManager.startPosition.x;
-        this.canvasManager.viewPostiion.y = clientY - this.canvasManager.startPosition.y;
+        if ( interactionMode !== InteractionMode.Moving ) return;
+        viewPosition.x = screenMousePosition.x - startPosition.x;
+        viewPosition.y = screenMousePosition.y - startPosition.y;
     }
 }

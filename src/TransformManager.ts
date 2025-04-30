@@ -1,30 +1,23 @@
 import { CanvasManager } from './CanvasManager.js'
 import { InteractionMode } from './types.js'
+import type { Vector2 } from './types'
 
 export class TransformManager {
 
     canvasManager: CanvasManager
     constructor (canvasManager: CanvasManager){this.canvasManager = canvasManager}
 
-    moveSelectedObjects( clientX: number, clientY: number ){
-        const viewPostiion = this.canvasManager.viewPostiion;
-        const interactionMode = this.canvasManager.interactionMode;
-        const selectedObjects = this.canvasManager.selectedObjects;
-        const dragOffsets = this.canvasManager.dragOffsets;
-        const isNotSelecting = !this.canvasManager.selectionStart || !this.canvasManager.selectionEnd;
-        const mouseX = clientX - viewPostiion.x;
-        const mouseY = clientY - viewPostiion.y;
-
-        if( interactionMode !== InteractionMode.Selecting ) return;
-        // 如果沒有在進行框選的話
-        if( isNotSelecting ) {
-            // 移動所有被選取的物件
-            for ( const object of selectedObjects ) {
-                const offsetForShape = dragOffsets.get( object );
-                const position = object.position;
+    moveSelectedObjects( screenMousePosition: Vector2 ){
+        const worldMousePosition: Vector2 = { x: 0, y: 0 }
+        worldMousePosition.x = screenMousePosition.x - this.canvasManager.viewPosition.x;
+        worldMousePosition.y = screenMousePosition.y - this.canvasManager.viewPosition.y;
+        if( this.canvasManager.interactionMode !== InteractionMode.Selecting ) return;
+        if( !this.canvasManager.selectionStart ) {
+            for ( const object of this.canvasManager.selectedObjects ) {
+                const offsetForShape = this.canvasManager.dragOffsets.get(object);
                 if ( offsetForShape ) {
-                    position.x = mouseX - offsetForShape.x;
-                    position.y = mouseY - offsetForShape.y;
+                    object.position.x = worldMousePosition.x - offsetForShape.x;
+                    object.position.y = worldMousePosition.y - offsetForShape.y;
                 }
             }
         }

@@ -5,32 +5,46 @@ import { CanvasManager } from './CanvasManager.js'
 export class DrawManager {
 
     canvasManager: CanvasManager
+    isDrawedInThisFrame = false
     constructor ( canvasManager: CanvasManager ) { 
         this.canvasManager = canvasManager 
     }
 
     draw() {
+        if (this.isDrawedInThisFrame) return;
+        this.isDrawedInThisFrame = true;
+        requestAnimationFrame(() => {
+            const ctx = this.canvasManager.ctx;
+            const viewPosition = this.canvasManager.viewPosition;
+            const selectedObjects = this.canvasManager.selectedObjects;
+            this.clearCanvas();
+            drawGrid(ctx, viewPosition);
+            this.drawObjects();
+            drawBoundingBox(ctx, selectedObjects, viewPosition);
+            this.drawSelectionArea();
+            this.isDrawedInThisFrame = false;
+        });
+    }
+
+    clearCanvas(){
         const ctx = this.canvasManager.ctx
         const canvas = this.canvasManager.canvas
-        const viewPostiion = this.canvasManager.viewPostiion
-        const objects = this.canvasManager.canvasObjects
-        const selectedObjects = this.canvasManager.selectedObjects
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+    }
+
+    drawObjects(){
+        const ctx = this.canvasManager.ctx
+        const viewPosition = this.canvasManager.viewPosition
+        const canvasObjects = this.canvasManager.canvasObjects
+        for ( const object of canvasObjects ) { 
+            object.draw(ctx, viewPosition) 
+        }
+    }
+
+    drawSelectionArea(){
+        const ctx = this.canvasManager.ctx
         const selectionStart = this.canvasManager.selectionStart
         const selectionEnd = this.canvasManager.selectionEnd
-    
-        // 清除畫布，準備重新繪製新一幀的畫面
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-        // 先繪製底部的格線
-        drawGrid( ctx, viewPostiion )
-    
-        // 再繪製所有物件
-        for ( const object of objects ) { object.draw(ctx, viewPostiion) }
-    
-        // 繪製被選取物件們的選取框
-        drawBoundingBox( ctx, selectedObjects, viewPostiion )
-    
-        // 如果有選取框，則繪製選取框
         if ( selectionStart && selectionEnd ) {
             ctx.save()
             ctx.strokeStyle = 'rgb(0, 119, 255)'

@@ -16,7 +16,7 @@ export function getBoundingEdges(bbox: BoundingBox) {
 
 /**
  * 判斷物件是否會被選取
- * @param object 要選取的物件
+ * @param object 要檢查是否會被選取的物件
  * @param selectionEdges 選取框的範圍
  * @param offset 畫布的偏移量
  * @param mode 框選的選取模式 完全包含才選取 or 只要有相交就選取
