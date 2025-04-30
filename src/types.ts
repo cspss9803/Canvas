@@ -22,6 +22,7 @@ export interface BoundingBoxStyle {
     color: Color
 }
 
+/** 物件包圍框的座標極值(最大值、最小值) */
 export interface BoundingEdges {
     minX: number;
     maxX: number;

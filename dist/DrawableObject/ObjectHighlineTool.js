@@ -1,4 +1,4 @@
-export function drawBoundingBox(ctx, objects, offset) {
+export function drawBoundingBox(ctx, objects, viewPostiion) {
     // 如果沒有選取任何物件，則不繪製
     if (objects.length === 0)
         return;
@@ -8,13 +8,13 @@ export function drawBoundingBox(ctx, objects, offset) {
     let maxX = -Infinity;
     let maxY = -Infinity;
     for (const object of objects) {
-        const box = object.getBoundingBox(offset);
+        const box = object.getBoundingBox(viewPostiion);
         minX = Math.min(minX, box.x);
         minY = Math.min(minY, box.y);
         maxX = Math.max(maxX, box.x + box.width);
         maxY = Math.max(maxY, box.y + box.height);
         // 繪製單個物件的外框
-        drawRoundedBox(ctx, box, offset, { thickness: 3, radius: 3, color: 'rgb(0, 183, 255)' });
+        drawRoundedBox(ctx, box, viewPostiion, { thickness: 3, radius: 3, color: 'rgb(0, 183, 255)' });
     }
     // 彙整出來的最終 Bounding Box
     const totalBox = {
@@ -23,7 +23,7 @@ export function drawBoundingBox(ctx, objects, offset) {
         width: maxX - minX,
         height: maxY - minY,
     };
-    drawRoundedBox(ctx, totalBox, offset, { thickness: 3, radius: 3, color: 'rgb(0, 85, 255)' });
+    drawRoundedBox(ctx, totalBox, viewPostiion, { thickness: 3, radius: 3, color: 'rgb(0, 85, 255)' });
 }
 function drawRoundedBox(ctx, box, offset, style) {
     const thickness = style.thickness;
