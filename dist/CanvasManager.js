@@ -8,16 +8,17 @@ import { EventManager } from './EventManager.js';
 import { InputAdapter } from './InputAdapter.js';
 export class CanvasManager {
     constructor(canvas) {
-        this.viewPosition = { x: 0, y: 0 };
-        this.startPosition = { x: 0, y: 0 };
+        this.viewportPosition = { x: 0, y: 0 };
+        this.pointerDownPosition = { x: 0, y: 0 };
         this.isClickOnObject = false;
         this.isDragging = false;
         this.dragOffsets = new Map();
-        this.selectionStart = null;
-        this.selectionEnd = null;
-        this.selectedObjects = [];
-        this.canvasObjects = [];
-        this.interactionMode = InteractionMode.Selecting;
+        this.selectionStartPoint = null;
+        this.selectionEndPoint = null;
+        this.selectedUIObjects = [];
+        this.uiObjects = [];
+        this.currentInteractionMode = InteractionMode.Selecting;
+        this.previousInteractionMode = null;
         this.canvas = canvas;
         this.canvas.style = 'cursor: url(./src/assets/select.svg) 0 0, auto; display: block;';
         this.ctx = canvas.getContext('2d');
@@ -31,14 +32,18 @@ export class CanvasManager {
         this.resizeWindow();
     }
     onMouseDown(event) {
-        if (event.button !== MouseButton.Left)
-            return;
-        const screenMousePosition = this.inputAdapter.getScreenMousePosition(event);
-        this.startPosition = this.inputAdapter.getWorldMousePosition(event);
-        this.selectionManager.startSelect(screenMousePosition, event.shiftKey);
+        this.pointerDownPosition = this.inputAdapter.getWorldMousePosition(event);
+        if (event.button === MouseButton.Left) {
+            const screenMousePosition = this.inputAdapter.getScreenMousePosition(event);
+            this.selectionManager.startSelect(screenMousePosition, event.shiftKey);
+            this.drawManager.draw();
+        }
+        else if (event.button === MouseButton.Middle) {
+            this.previousInteractionMode = this.currentInteractionMode;
+            this.currentInteractionMode = InteractionMode.Moving;
+        }
         this.isDragging = true;
         this.updateCursor();
-        this.drawManager.draw();
     }
     onMouseMove(event) {
         if (!this.isDragging)
@@ -50,8 +55,12 @@ export class CanvasManager {
         this.drawManager.draw();
     }
     onMouseUp(event) {
-        this.selectionManager.selectObjects(this.selectionStart, this.selectionEnd, event.shiftKey);
+        this.selectionManager.endSelect();
         this.resetInteractionState();
+        if (event.button === MouseButton.Middle) {
+            this.currentInteractionMode = this.previousInteractionMode;
+            this.previousInteractionMode = null;
+        }
         this.updateCursor();
         this.drawManager.draw();
     }
@@ -61,10 +70,10 @@ export class CanvasManager {
         this.drawManager.draw();
     }
     updateCursor() {
-        if (this.interactionMode === InteractionMode.Selecting) {
+        if (this.currentInteractionMode === InteractionMode.Selecting) {
             this.canvas.style.cursor = 'url(./src/assets/select.svg) 0 0, auto';
         }
-        else if (this.interactionMode === InteractionMode.Moving) {
+        else if (this.currentInteractionMode === InteractionMode.Moving) {
             this.canvas.style.cursor = this.isDragging
                 ? 'url(./src/assets/grabbing.svg) 16 16, grabbing'
                 : 'url(./src/assets/hand.svg) 16 16, grab';
@@ -74,7 +83,5 @@ export class CanvasManager {
         this.dragOffsets.clear();
         this.isDragging = false;
         this.isClickOnObject = false;
-        this.selectionStart = null;
-        this.selectionEnd = null;
     }
 }

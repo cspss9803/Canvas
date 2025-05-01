@@ -1,7 +1,7 @@
 import type { Color, Vector2, BoundingBox } from '../../types'
-import { DrawableObject } from '../DrawableObject.js'
+import { UIObjectBase } from '../UIObject.js'
 
-export abstract class Shape extends DrawableObject {
+export abstract class Shape extends UIObjectBase {
     constructor( position: Vector2, public color: Color = '#f00' ) { super(position) }
 
     draw( ctx: CanvasRenderingContext2D, offset: Vector2 ): void {

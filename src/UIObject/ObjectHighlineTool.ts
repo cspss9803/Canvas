@@ -1,9 +1,9 @@
-import type { DrawableObject } from './DrawableObject.js'
+import type { UIObject } from './UIObject.js'
 import type { Vector2, BoundingBox, BoundingBoxStyle } from '../types.js'
 
 export function drawBoundingBox(
     ctx: CanvasRenderingContext2D, 
-    objects: DrawableObject[], 
+    objects: UIObject[], 
     viewPostiion: Vector2
 ) {
     // 如果沒有選取任何物件，則不繪製

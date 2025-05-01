@@ -1,5 +1,5 @@
 import drawGrid from './DrawGrid.js'
-import { drawBoundingBox } from './DrawableObject/ObjectHighlineTool.js'
+import { drawBoundingBox } from './UIObject/ObjectHighlineTool.js'
 import { CanvasManager } from './CanvasManager.js'
 
 export class DrawManager {
@@ -15,8 +15,8 @@ export class DrawManager {
         this.isDrawedInThisFrame = true;
         requestAnimationFrame(() => {
             const ctx = this.canvasManager.ctx;
-            const viewPosition = this.canvasManager.viewPosition;
-            const selectedObjects = this.canvasManager.selectedObjects;
+            const viewPosition = this.canvasManager.viewportPosition;
+            const selectedObjects = this.canvasManager.selectedUIObjects;
             this.clearCanvas();
             drawGrid(ctx, viewPosition);
             this.drawObjects();
@@ -34,17 +34,17 @@ export class DrawManager {
 
     drawObjects(){
         const ctx = this.canvasManager.ctx
-        const viewPosition = this.canvasManager.viewPosition
-        const canvasObjects = this.canvasManager.canvasObjects
-        for ( const object of canvasObjects ) { 
+        const viewPosition = this.canvasManager.viewportPosition
+        const uiObjects = this.canvasManager.uiObjects
+        for ( const object of uiObjects ) { 
             object.draw(ctx, viewPosition) 
         }
     }
 
     drawSelectionArea(){
         const ctx = this.canvasManager.ctx
-        const selectionStart = this.canvasManager.selectionStart
-        const selectionEnd = this.canvasManager.selectionEnd
+        const selectionStart = this.canvasManager.selectionStartPoint
+        const selectionEnd = this.canvasManager.selectionEndPoint
         if ( selectionStart && selectionEnd ) {
             ctx.save()
             ctx.strokeStyle = 'rgb(0, 119, 255)'

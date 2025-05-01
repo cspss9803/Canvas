@@ -1,3 +1,4 @@
+import { UIObject } from './UIObject/UIObject.js'
 import { CanvasManager } from './CanvasManager.js'
 import { InteractionMode, SelectionMode } from './types.js'
 import type { BoundingEdges, Vector2 } from './types'
@@ -6,36 +7,34 @@ import { isObjectWouldBeSelected } from './BoundingBoxHelper.js'
 export class SelectionManager {
 
     canvasManager: CanvasManager
-    constructor ( canvasManager: CanvasManager ) { this.canvasManager = canvasManager }
+    constructor ( canvasManager: CanvasManager ) { this.canvasManager = canvasManager; }
 
     startSelect( screenMousePosition: Vector2, usedShift: boolean ){
-        if ( this.canvasManager.interactionMode !== InteractionMode.Selecting ) return;
+        if ( this.canvasManager.currentInteractionMode !== InteractionMode.Selecting ) return;
         const canvasManager = this.canvasManager;
 
         // 從頂到底開始尋找被點擊到的物件
-        for ( const object of [...canvasManager.canvasObjects].reverse() ) {
+        for ( const object of [...canvasManager.uiObjects].reverse() ) {
 
             // 真的有物件被點擊到的話
-            if ( object.isHit(screenMousePosition, canvasManager.viewPosition) ) {
+            if ( object.isHit(screenMousePosition, canvasManager.viewportPosition) ) {
                 canvasManager.isClickOnObject = true;
-                if ( usedShift ) {
-                    const index = canvasManager.selectedObjects.indexOf(object);
-                    if ( index !== -1 ) { canvasManager.selectedObjects.splice(index, 1) } 
-                    else { canvasManager.selectedObjects.push(object) }
-                } 
+
+                // 有按著 Shift 鍵時，點到這物件的話，如果它已被選取就取消選取，反之則進行選取
+                if ( usedShift ) { this.toggleSelection(object) }
                 
                 // 在沒按著 Shift 鍵時，點到這個物件的話
                 else {
                     canvasManager.dragOffsets.clear();
-                    if ( !canvasManager.selectedObjects.includes(object) ) {
-                        canvasManager.selectedObjects = [object];
+                    if ( !canvasManager.selectedUIObjects.includes(object) ) {
+                        canvasManager.selectedUIObjects = [object];
                     }
 
                     // 初始化拖曳偏移量
-                    for (const object of canvasManager.selectedObjects) {
+                    for (const object of canvasManager.selectedUIObjects) {
                         canvasManager.dragOffsets.set(object, {
-                            x: canvasManager.startPosition.x - object.position.x,
-                            y: canvasManager.startPosition.y - object.position.y,
+                            x: canvasManager.pointerDownPosition.x - object.position.x,
+                            y: canvasManager.pointerDownPosition.y - object.position.y,
                         });
                     }
                 }
@@ -45,53 +44,83 @@ export class SelectionManager {
 
         // 如果按下的位置剛好在空白處
         if ( !canvasManager.isClickOnObject ) {
-            if ( usedShift ) {
-                canvasManager.selectedObjects = []; // 才能清空選取的物件
+            if ( !usedShift ) { // 沒按著 Shift 的話
+                canvasManager.selectedUIObjects = []; // 才能清空選取的物件
                 canvasManager.dragOffsets.clear();  // 同時也清空拖曳偏移量
             }
+            this.selectionSnapshot = new Set(canvasManager.selectedUIObjects);
+            this.processedInDrag.clear();
+
             // 並且開始選取範圍
-            canvasManager.selectionStart = screenMousePosition;
-            canvasManager.selectionEnd = screenMousePosition;
+            canvasManager.selectionStartPoint = screenMousePosition;
+            canvasManager.selectionEndPoint = screenMousePosition;
         }
     }
 
     updateSelectionArea( screenMousePosition: Vector2 ) {
         if(
-            this.canvasManager.interactionMode !== InteractionMode.Selecting ||
-            this.canvasManager.selectionStart === null
+            this.canvasManager.currentInteractionMode !== InteractionMode.Selecting ||
+            this.canvasManager.selectionStartPoint === null
         ) return;
-        this.canvasManager.selectionEnd = screenMousePosition;
-    }
+        this.canvasManager.selectionEndPoint = screenMousePosition;
 
-    selectObjects(start: Vector2 | null, end: Vector2 | null, usedShift: boolean) {
-        if ( this.canvasManager.isDragging && start && end ) {
+        const selectionEdges: BoundingEdges = {
+            minX: Math.min( this.canvasManager.selectionStartPoint.x, this.canvasManager.selectionEndPoint.x),
+            maxX: Math.max( this.canvasManager.selectionStartPoint.x, this.canvasManager.selectionEndPoint.x),
+            minY: Math.min( this.canvasManager.selectionStartPoint.y, this.canvasManager.selectionEndPoint.y),
+            maxY: Math.max( this.canvasManager.selectionStartPoint.y, this.canvasManager.selectionEndPoint.y),
+        };
 
-            // 如果沒按著 Shift 鍵，就得清空選取清單
-            if ( !usedShift ) this.canvasManager.selectedObjects = [];
+        const selectedSet = new Set(this.canvasManager.selectedUIObjects);
 
-            // 取得框選範圍
-            const selectionEdges: BoundingEdges = {
-                minX: Math.min(start.x, end.x),
-                maxX: Math.max(start.x, end.x),
-                minY: Math.min(start.y, end.y),
-                maxY: Math.max(start.y, end.y),
-            };
-    
-            // 尋找所有 (完全在選取範圍內|有碰觸到選取範圍) 的物件
-            for (const object of this.canvasManager.canvasObjects) {
-                if ( isObjectWouldBeSelected(
-                    object,
-                    selectionEdges,
-                    this.canvasManager.viewPosition,
-                    SelectionMode.Intersect
-                )) {
-                    // 如果這個物件尚未在選取清單中，才新增進選取清單
-                    if (!this.canvasManager.selectedObjects.includes(object)) {
-                        this.canvasManager.selectedObjects.push(object);
-                    }
+        for (const object of this.canvasManager.uiObjects) {
+            const isInBox = isObjectWouldBeSelected(
+                object,
+                selectionEdges,
+                this.canvasManager.viewportPosition,
+                SelectionMode.Intersect
+            );
+
+            const wasSelected = this.selectionSnapshot.has(object);
+            const isCurrentlySelected = selectedSet.has(object);
+
+            if (isInBox) {
+                if (wasSelected && isCurrentlySelected) {
+                    // 原本有選 + 現在有框到 = 要取消
+                    this.canvasManager.selectedUIObjects.splice(this.canvasManager.selectedUIObjects.indexOf(object), 1);
+                } else if (!wasSelected && !isCurrentlySelected) {
+                    // 原本沒選 + 現在有框到 = 要選取
+                    this.canvasManager.selectedUIObjects.push(object);
+                }
+            } else { // 選取框沒有碰到 = 恢復成原本狀態
+                
+                if ( wasSelected && !isCurrentlySelected ) {
+                    // 原本有被選取 + 現在沒被框到 = 恢復成選取狀態
+                    this.canvasManager.selectedUIObjects.push(object);
+                } else if (!wasSelected && isCurrentlySelected) {
+                    // 原本沒被選取 + 現在沒被框到 = 恢復成未選取狀態
+                    this.canvasManager.selectedUIObjects.splice(this.canvasManager.selectedUIObjects.indexOf(object), 1);
                 }
             }
+        }
+    }
 
+    endSelect() {
+        this.canvasManager.selectionStartPoint = null;
+        this.canvasManager.selectionEndPoint = null;
+        this.processedInDrag.clear();
+        this.selectionSnapshot.clear();
+    }
+
+    private selectionSnapshot: Set<UIObject> = new Set();
+    private processedInDrag: Set<UIObject> = new Set();
+
+    private toggleSelection(object: UIObject) {
+        const index = this.canvasManager.selectedUIObjects.indexOf(object);
+        if (index !== -1) {
+            this.canvasManager.selectedUIObjects.splice(index, 1);
+        } else {
+            this.canvasManager.selectedUIObjects.push(object);
         }
     }
 }

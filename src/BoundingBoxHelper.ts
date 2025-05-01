@@ -1,4 +1,4 @@
-import { DrawableObject } from './DrawableObject/DrawableObject.js'
+import { UIObject } from './UIObject/UIObject.js'
 import type { BoundingEdges, BoundingBox, Vector2 } from './types.js'
 import { SelectionMode } from './types.js'
 
@@ -24,7 +24,7 @@ export function getBoundingEdges(bbox: BoundingBox) {
  * @returns 
  */
 export function isObjectWouldBeSelected(
-    object: DrawableObject,
+    object: UIObject,
     selectionEdges: BoundingEdges,
     offset: Vector2,
     mode: SelectionMode

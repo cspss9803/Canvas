@@ -1,7 +1,7 @@
 import type { Color, Vector2, BoundingBox } from '../../types';
-import { DrawableObject } from '../DrawableObject.js';
+import { UIObjectBase } from '../UIObject.js';
 
-export abstract class StrokeShape extends DrawableObject {
+export abstract class StrokeShape extends UIObjectBase {
     constructor(
         position: Vector2,
         public strokeColor: Color = '#000',

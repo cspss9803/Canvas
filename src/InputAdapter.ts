@@ -6,8 +6,8 @@ export class InputAdapter {
   
     getWorldMousePosition(event: MouseEvent): Vector2 {
         return {
-            x: event.clientX - this.canvasManager.viewPosition.x,
-            y: event.clientY - this.canvasManager.viewPosition.y
+            x: event.clientX - this.canvasManager.viewportPosition.x,
+            y: event.clientY - this.canvasManager.viewportPosition.y
         };
     }
   
@@ -17,5 +17,4 @@ export class InputAdapter {
             y: event.clientY
         };
     }
-  }
-  
+}

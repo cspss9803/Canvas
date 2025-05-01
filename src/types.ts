@@ -1,7 +1,7 @@
-export type RGB = `rgb(${number}, ${number}, ${number})`
-export type RGBA = `rgba(${number}, ${number}, ${number}, ${number})`
+export type RGB = `rgb(${number}, ${number}, ${number})`;
+export type RGBA = `rgba(${number}, ${number}, ${number}, ${number})`;
 export type HEX = `#${string}`
-export type Color = RGB | RGBA | HEX
+export type Color = RGB | RGBA | HEX;
 
 export type Vector2 = { x: number; y: number; }
 
@@ -10,16 +10,16 @@ export enum InteractionMode { Selecting, Moving }
 export enum MouseButton { Left = 0, Middle = 1, Right = 2, Back = 3, Forward = 4 }
 
 export interface BoundingBox {
-    x: number
-    y: number
-    width: number
-    height: number
+    x: number;
+    y: number;
+    width: number;
+    height: number;
 }
 
 export interface BoundingBoxStyle {
-    thickness: number
-    radius: number
-    color: Color
+    thickness: number;
+    radius: number;
+    color: Color;
 }
 
 /** 物件包圍框的座標極值(最大值、最小值) */
