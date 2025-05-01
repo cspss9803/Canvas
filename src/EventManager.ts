@@ -6,6 +6,7 @@ export class EventManager {
       window.addEventListener('mousedown', e => this.handleMouseDown(e));
       window.addEventListener('mousemove', e => this.handleMouseMove(e));
       window.addEventListener('mouseup', e => this.handleMouseUp(e));
+      window.addEventListener('wheel', e => this.handleMouseWheel(e), { passive: false });
       window.addEventListener('keydown', e => this.handleKeyDown(e));
       window.addEventListener('resize', () => this.canvasManager.resizeWindow());
     }
@@ -21,7 +22,12 @@ export class EventManager {
     private handleMouseUp(event: MouseEvent) {
         this.canvasManager.onMouseUp(event);
     }
-  
+
+    private handleMouseWheel(event: WheelEvent) {
+        event.preventDefault();
+        this.canvasManager.onMouseWheel(event);
+    }
+      
     private handleKeyDown(event: KeyboardEvent) {
         this.canvasManager.keyboardManager.handleKeyboardInput(event.code);
     }
