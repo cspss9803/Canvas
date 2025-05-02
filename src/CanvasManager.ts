@@ -1,7 +1,6 @@
 import type { UIObject } from './UIObject/UIObject'
 import type { Vector2 } from './types'
 import { InteractionMode, MouseButton } from './types.js'
-import { ViewportManager } from './ViewportManager.js'
 import { SelectionManager } from './SelectionManager.js'
 import { TransformManager } from './TransformManager.js'
 import { KeyboardManager } from './KeyboardManager.js'
@@ -26,7 +25,6 @@ export class CanvasManager {
     uiObjects: UIObject[] = [];
     currentInteractionMode = InteractionMode.Selecting;
     previousInteractionMode: InteractionMode | null = null
-    viewportManager: ViewportManager
     selectionManager: SelectionManager
     transformManager: TransformManager
     keyboardManager: KeyboardManager
@@ -38,7 +36,6 @@ export class CanvasManager {
         this.canvas = canvas;
         this.canvas.style = 'cursor: url(./src/assets/select.svg) 0 0, auto; display: block;';
         this.ctx = canvas.getContext('2d') as CanvasRenderingContext2D ;
-        this.viewportManager = new ViewportManager(this);
         this.selectionManager = new SelectionManager(this);
         this.transformManager = new TransformManager(this);
         this.keyboardManager = new KeyboardManager(this);
@@ -81,11 +78,9 @@ export class CanvasManager {
         if ( !this.isDragging ) return;
 
         if (this.currentInteractionMode === InteractionMode.Moving && this.lastScreenPos) {
-            // Pan：用螢幕增量更新 offset
-            const dx = event.clientX - this.lastScreenPos.x;
-            const dy = event.clientY - this.lastScreenPos.y;
-            this.offset.x += dx;
-            this.offset.y += dy;
+            // 用螢幕增量更新 offset
+            this.offset.x += event.clientX - this.lastScreenPos.x;
+            this.offset.y += event.clientY - this.lastScreenPos.y;
             this.lastScreenPos = { x: event.clientX, y: event.clientY };
             updateOffset(this.offset);
         } else {
