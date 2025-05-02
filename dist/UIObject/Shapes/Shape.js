@@ -4,16 +4,15 @@ export class Shape extends UIObjectBase {
         super(position);
         this.color = color;
     }
-    draw(ctx, offset) {
+    draw(ctx, viewportPosition, zoom) {
         ctx.save();
-        ctx.translate(offset.x, offset.y);
+        ctx.translate(viewportPosition.x, viewportPosition.y);
+        ctx.scale(zoom, zoom);
         ctx.fillStyle = this.color;
         this.renderShape(ctx);
         ctx.restore();
     }
-    isHit(point, offset) {
-        const localX = point.x - offset.x;
-        const localY = point.y - offset.y;
-        return this.isPointInside(localX, localY);
+    isHit(point) {
+        return this.isPointInside(point.x, point.y);
     }
 }

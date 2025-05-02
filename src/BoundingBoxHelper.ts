@@ -26,30 +26,24 @@ export function getBoundingEdges(bbox: BoundingBox) {
 export function isObjectWouldBeSelected(
     object: UIObject,
     selectionEdges: BoundingEdges,
-    offset: Vector2,
     mode: SelectionMode
 ): boolean {
-    const bbox = object.getBoundingBox( offset );
+    const bbox = object.getBoundingBox();
     const { minX, minY, maxX, maxY } = getBoundingEdges(bbox);
-
-    const realMinX = minX + offset.x;
-    const realMaxX = maxX + offset.x;
-    const realMinY = minY + offset.y;
-    const realMaxY = maxY + offset.y;
-
+    
     if (mode === SelectionMode.Inside) {
         return (
-            realMinX >= selectionEdges.minX &&
-            realMaxX <= selectionEdges.maxX &&
-            realMinY >= selectionEdges.minY &&
-            realMaxY <= selectionEdges.maxY
+            minX >= selectionEdges.minX &&
+            maxX <= selectionEdges.maxX &&
+            minY >= selectionEdges.minY &&
+            maxY <= selectionEdges.maxY
         );
     } else { // SelectionMode.Intersect
         return !(
-            realMaxX < selectionEdges.minX || // 物件在選取框左邊
-            realMinX > selectionEdges.maxX || // 物件在選取框右邊
-            realMaxY < selectionEdges.minY || // 物件在選取框上方
-            realMinY > selectionEdges.maxY    // 物件在選取框下方
+            maxX < selectionEdges.minX || // 物件在選取框左邊
+            minX > selectionEdges.maxX || // 物件在選取框右邊
+            maxY < selectionEdges.minY || // 物件在選取框上方
+            minY > selectionEdges.maxY    // 物件在選取框下方
         );
     }
 }

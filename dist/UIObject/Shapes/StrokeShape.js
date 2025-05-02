@@ -7,18 +7,17 @@ export class StrokeShape extends UIObjectBase {
         this.lineWidth = lineWidth;
         this.lineDash = lineDash;
     }
-    draw(ctx, offset) {
+    draw(ctx, viewportPosition, zoom) {
         ctx.save();
-        ctx.translate(offset.x, offset.y);
+        ctx.translate(viewportPosition.x, viewportPosition.y);
+        ctx.scale(zoom, zoom);
         ctx.strokeStyle = this.strokeColor;
         ctx.lineWidth = this.lineWidth;
         ctx.setLineDash(this.lineDash);
         this.renderStroke(ctx);
         ctx.restore();
     }
-    isHit(point, offset) {
-        const localX = point.x - offset.x;
-        const localY = point.y - offset.y;
-        return this.isPointNearStroke(localX, localY);
+    isHit(point) {
+        return this.isPointNearStroke(point.x, point.y);
     }
 }

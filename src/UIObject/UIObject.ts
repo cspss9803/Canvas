@@ -3,9 +3,9 @@ import type { Vector2, BoundingBox } from '../types';
 export interface UIObject {
     position: Vector2;
 
-    draw(ctx: CanvasRenderingContext2D, viewPosition: Vector2): void;
-    getBoundingBox(viewPosition: Vector2): BoundingBox;
-    isHit(point: Vector2, viewPosition: Vector2): boolean;
+    draw(ctx: CanvasRenderingContext2D, viewportPosition: Vector2, zoom:number): void;
+    getBoundingBox(): BoundingBox;
+    isHit(point: Vector2, viewportPosition: Vector2): boolean;
 
     onClick?(e: MouseEvent): void;
     onDoubleClick?(e: MouseEvent): void;
@@ -17,9 +17,9 @@ export interface UIObject {
 export abstract class UIObjectBase implements UIObject {
     constructor(public position: Vector2) {}
 
-    abstract draw(ctx: CanvasRenderingContext2D, viewPosition: Vector2): void;
-    abstract getBoundingBox(viewPosition: Vector2): BoundingBox;
-    abstract isHit(point: Vector2, viewPosition: Vector2): boolean;
+    abstract draw(ctx: CanvasRenderingContext2D, viewportPosition: Vector2, zoom:number): void;
+    abstract getBoundingBox(): BoundingBox;
+    abstract isHit(point: Vector2, viewportPosition: Vector2): boolean;
 
     // 以下是互動函式，可由子類 override
     onClick?(e: MouseEvent): void;

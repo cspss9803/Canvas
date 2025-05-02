@@ -1,4 +1,4 @@
-import drawGrid from './DrawGrid.js'
+import { drawGrid } from './DrawGrid.js'
 import { drawBoundingBox } from './UIObject/ObjectHighlineTool.js'
 import { CanvasManager } from './CanvasManager.js'
 
@@ -17,10 +17,11 @@ export class DrawManager {
             const ctx = this.canvasManager.ctx;
             const viewPosition = this.canvasManager.viewportPosition;
             const selectedObjects = this.canvasManager.selectedUIObjects;
+            const zoom = this.canvasManager.zoom;
             this.clearCanvas();
-            drawGrid(ctx, viewPosition);
+            drawGrid(ctx, viewPosition, zoom);
             this.drawObjects();
-            drawBoundingBox(ctx, selectedObjects, viewPosition);
+            drawBoundingBox(ctx, selectedObjects, viewPosition, zoom);
             this.drawSelectionArea();
             this.isDrawedInThisFrame = false;
         });
@@ -36,8 +37,9 @@ export class DrawManager {
         const ctx = this.canvasManager.ctx
         const viewPosition = this.canvasManager.viewportPosition
         const uiObjects = this.canvasManager.uiObjects
+        const zoom = this.canvasManager.zoom
         for ( const object of uiObjects ) { 
-            object.draw(ctx, viewPosition) 
+            object.draw(ctx, viewPosition, zoom) 
         }
     }
 
@@ -45,8 +47,12 @@ export class DrawManager {
         const ctx = this.canvasManager.ctx
         const selectionStart = this.canvasManager.selectionStartPoint
         const selectionEnd = this.canvasManager.selectionEndPoint
+        const viewportPosition = this.canvasManager.viewportPosition
+        const zoom = this.canvasManager.zoom
         if ( selectionStart && selectionEnd ) {
             ctx.save()
+            ctx.translate( viewportPosition.x, viewportPosition.y )
+            ctx.scale(zoom, zoom);
             ctx.strokeStyle = 'rgb(0, 119, 255)'
             ctx.lineWidth = 0.5;
             ctx.fillStyle = 'rgba(0, 119, 255, 0.25)'

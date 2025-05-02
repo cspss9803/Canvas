@@ -4,7 +4,8 @@ import type { Vector2, BoundingBox, BoundingBoxStyle } from '../types.js'
 export function drawBoundingBox(
     ctx: CanvasRenderingContext2D, 
     objects: UIObject[], 
-    viewPostiion: Vector2
+    viewportPosition: Vector2,
+    zoom: number
 ) {
     // 如果沒有選取任何物件，則不繪製
     if ( objects.length === 0 ) return
@@ -16,19 +17,27 @@ export function drawBoundingBox(
     let maxY = -Infinity
 
     for ( const object of objects ) {
-        const box = object.getBoundingBox( viewPostiion )
-        minX = Math.min( minX, box.x )
-        minY = Math.min( minY, box.y )
-        maxX = Math.max( maxX, box.x + box.width )
-        maxY = Math.max( maxY, box.y + box.height )
+        const box = object.getBoundingBox()
+
+        const adjustedBox = {
+            x: box.x * zoom,
+            y: box.y * zoom,
+            width: box.width * zoom,
+            height: box.height * zoom
+        };
+
+        minX = Math.min(minX, adjustedBox.x);
+        minY = Math.min(minY, adjustedBox.y);
+        maxX = Math.max(maxX, adjustedBox.x + adjustedBox.width);
+        maxY = Math.max(maxY, adjustedBox.y + adjustedBox.height);
 
         // 繪製單個物件的外框
         drawRoundedBox(
             ctx, 
-            box, 
-            viewPostiion,
+            adjustedBox, 
+            viewportPosition,
             { thickness: 3, radius: 3, color: 'rgb(0, 183, 255)' }
-        )
+        );
     }
 
     // 彙整出來的最終 Bounding Box
@@ -42,7 +51,7 @@ export function drawBoundingBox(
     drawRoundedBox(
         ctx, 
         totalBox, 
-        viewPostiion,
+        viewportPosition,
         { thickness: 3, radius: 3, color: 'rgb(0, 85, 255)' }
     )
 }
@@ -50,14 +59,14 @@ export function drawBoundingBox(
 function drawRoundedBox(
     ctx: CanvasRenderingContext2D,
     box: BoundingBox,
-    offset: Vector2,
+    viewportPosition: Vector2,
     style: BoundingBoxStyle
 ) {
     const thickness = style.thickness
     const radius = style.radius
     const color = style.color
     ctx.save()
-    ctx.translate( offset.x, offset.y )
+    ctx.translate( viewportPosition.x, viewportPosition.y )
     ctx.strokeStyle = color
     ctx.lineWidth = thickness
 

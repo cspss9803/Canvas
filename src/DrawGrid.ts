@@ -23,18 +23,24 @@ export interface GridSettings {
 
 enum Direction { Vertical, Horizontal }
 
-function drawGrid( context: CanvasRenderingContext2D, viewPostiion: Vector2, gridSettings: GridSettings = {
-    gridSize: 25,
-    thinLineColor: '#ddd',
-    thinLineWidth: 0.5,
-    thickLineColor: '#ccc',
-    thickLineWidth: 1,
-    thickLineInterval: 5
-} ) {
+export function drawGrid( 
+    context: CanvasRenderingContext2D, 
+    viewportPostiion: Vector2, 
+    zoom: number,
+    gridSettings: GridSettings = {
+        gridSize: 25,
+        thinLineColor: '#ddd',
+        thinLineWidth: 0.5,
+        thickLineColor: '#ccc',
+        thickLineWidth: 1,
+        thickLineInterval: 5
+    } 
+) {
     
     const ctx = context;
     const { canvas } = context;
-    const { gridSize, thinLineColor, thinLineWidth, thickLineColor, thickLineWidth, thickLineInterval } = gridSettings;
+    const { thinLineColor, thinLineWidth, thickLineColor, thickLineWidth, thickLineInterval } = gridSettings;
+    const gridSize = gridSettings.gridSize * zoom;
 
     function drawLines(direction: Direction) {
         const isVertical = direction === Direction.Vertical;
@@ -43,7 +49,7 @@ function drawGrid( context: CanvasRenderingContext2D, viewPostiion: Vector2, gri
         const max = isVertical ? canvas.width : canvas.height;
 
         // 計算偏移值，根據當前繪製的方向選擇 x 或 y 偏移值
-        const offsetValue = isVertical ? viewPostiion.x : viewPostiion.y;
+        const offsetValue = isVertical ? viewportPostiion.x : viewportPostiion.y;
 
         for (let pos = offsetValue % gridSize; pos < max; pos += gridSize) {
             const absPos = pos - offsetValue;
@@ -82,5 +88,3 @@ function drawGrid( context: CanvasRenderingContext2D, viewPostiion: Vector2, gri
     drawLines(Direction.Horizontal)
 
 }
-
-export default drawGrid

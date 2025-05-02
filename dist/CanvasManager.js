@@ -5,11 +5,13 @@ import { TransformManager } from './TransformManager.js';
 import { KeyboardManager } from './KeyboardManager.js';
 import { DrawManager } from './DrawManager.js';
 import { EventManager } from './EventManager.js';
-import { InputAdapter } from './InputAdapter.js';
+import { CoordinateTransformer } from './CoordinateTransformer.js';
+import { updateMousePosition, updatePointerDownPosition, updateViewportPosition, updateZoom, updateWindowsSize } from './Debug.js';
 export class CanvasManager {
     constructor(canvas) {
         this.viewportPosition = { x: 0, y: 0 };
         this.pointerDownPosition = { x: 0, y: 0 };
+        this.zoom = 1;
         this.isClickOnObject = false;
         this.isDragging = false;
         this.dragOffsets = new Map();
@@ -28,14 +30,18 @@ export class CanvasManager {
         this.keyboardManager = new KeyboardManager(this);
         this.drawManager = new DrawManager(this);
         this.eventManager = new EventManager(this);
-        this.inputAdapter = new InputAdapter(this);
+        this.coordinateTransformer = new CoordinateTransformer(this);
         this.resizeWindow();
     }
     onMouseDown(event) {
-        this.pointerDownPosition = this.inputAdapter.getWorldMousePosition(event);
+        const worldMousePosition = this.coordinateTransformer.screenToWorld({
+            x: event.clientX,
+            y: event.clientY
+        });
+        this.pointerDownPosition = worldMousePosition;
+        updatePointerDownPosition(this.pointerDownPosition);
         if (event.button === MouseButton.Left) {
-            const screenMousePosition = this.inputAdapter.getScreenMousePosition(event);
-            this.selectionManager.startSelect(screenMousePosition, event.shiftKey);
+            this.selectionManager.startSelect(event.shiftKey);
             this.drawManager.draw();
         }
         else if (event.button === MouseButton.Middle) {
@@ -46,15 +52,20 @@ export class CanvasManager {
         this.updateCursor();
     }
     onMouseMove(event) {
+        const worldMousePosition = this.coordinateTransformer.screenToWorld({
+            x: event.clientX,
+            y: event.clientY
+        });
+        updateMousePosition(worldMousePosition);
         if (!this.isDragging)
             return;
-        const screenMousePosition = this.inputAdapter.getScreenMousePosition(event);
-        this.selectionManager.updateSelectionArea(screenMousePosition);
-        this.transformManager.moveSelectedObjects(screenMousePosition);
-        this.viewportManager.moveViewport(screenMousePosition);
+        this.selectionManager.updateSelectionArea(worldMousePosition);
+        this.transformManager.moveSelectedObjects(worldMousePosition);
+        this.viewportManager.moveViewport(worldMousePosition);
         this.drawManager.draw();
     }
     onMouseUp(event) {
+        updatePointerDownPosition(null);
         this.selectionManager.endSelect();
         this.resetInteractionState();
         if (event.button === MouseButton.Middle) {
@@ -67,6 +78,21 @@ export class CanvasManager {
     resizeWindow() {
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
+        updateWindowsSize(this.canvas.width, this.canvas.height);
+        this.drawManager.draw();
+    }
+    onMouseWheel(event) {
+        if (!event.ctrlKey)
+            return;
+        const ZOOM_PERCENT_STEP = 0.05; // 5%
+        const isZoomingIn = event.deltaY < 0; // 上滾是放大，deltaY 為負
+        let newZoom = this.zoom + (isZoomingIn ? ZOOM_PERCENT_STEP : -ZOOM_PERCENT_STEP);
+        // 限制範圍
+        newZoom = Math.min(2, Math.max(0.5, newZoom));
+        // 四捨五入保留小數第三位
+        this.zoom = Math.round(newZoom * 1000) / 1000;
+        updateZoom(this.zoom);
+        updateViewportPosition(this.viewportPosition);
         this.drawManager.draw();
     }
     updateCursor() {
