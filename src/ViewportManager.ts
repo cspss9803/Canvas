@@ -9,13 +9,13 @@ export class ViewportManager {
     constructor ( canvasManager: CanvasManager ) { this.canvasManager = canvasManager; }
 
     moveViewport( worldMousePosition: Vector2 ) {
-        const currentInteractionMode = this.canvasManager.currentInteractionMode;
+        if ( this.canvasManager.currentInteractionMode !== InteractionMode.Moving ) return;
+
         const offset = this.canvasManager.offset;
         const pointerDownPosition = this.canvasManager.pointerDownPosition;
 
-        if ( currentInteractionMode !== InteractionMode.Moving ) return;
         offset.x += worldMousePosition.x - pointerDownPosition.x;
         offset.y += worldMousePosition.y - pointerDownPosition.y;
-        updateOffset(offset);
+        updateOffset(offset); // 把目前的 offset 值顯示在網頁上
     }
 }
