@@ -14,17 +14,18 @@ export function drawGrid(context, offset, zoom, gridSettings = {
     const ctx = context;
     const { canvas } = context;
     const { thinLineColor, thinLineWidth, thickLineColor, thickLineWidth, thickLineInterval } = gridSettings;
-    const gridSize = gridSettings.gridSize * zoom;
+    const gridSize = Math.round(gridSettings.gridSize * zoom * 100) / 100;
     function drawLines(direction) {
         const isVertical = direction === Direction.Vertical;
         // 代表畫布的寬度或高度，取決於當前繪製的方向
         const max = isVertical ? canvas.width : canvas.height;
         // 計算偏移值，根據當前繪製的方向選擇 x 或 y 偏移值
         const offsetValue = isVertical ? offset.x : offset.y;
+        let gridIndex = Math.floor((offsetValue % gridSize - offsetValue) / gridSize);
         for (let pos = offsetValue % gridSize; pos < max; pos += gridSize) {
-            const absPos = pos - offsetValue;
             // 判斷是否為粗線
-            const isThickLine = Math.floor(absPos / gridSize) % thickLineInterval === 0;
+            const isThickLine = gridIndex % thickLineInterval === 0;
+            gridIndex++;
             // 設定線條樣式
             ctx.strokeStyle = isThickLine ? thickLineColor : thinLineColor;
             ctx.lineWidth = isThickLine ? thickLineWidth : thinLineWidth;

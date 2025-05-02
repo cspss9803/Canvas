@@ -40,7 +40,7 @@ export function drawGrid(
     const ctx = context;
     const { canvas } = context;
     const { thinLineColor, thinLineWidth, thickLineColor, thickLineWidth, thickLineInterval } = gridSettings;
-    const gridSize = gridSettings.gridSize * zoom;
+    const gridSize = Math.round(gridSettings.gridSize * zoom * 100) / 100;
 
     function drawLines(direction: Direction) {
         const isVertical = direction === Direction.Vertical;
@@ -51,11 +51,12 @@ export function drawGrid(
         // 計算偏移值，根據當前繪製的方向選擇 x 或 y 偏移值
         const offsetValue = isVertical ? offset.x : offset.y;
 
+        let gridIndex = Math.floor((offsetValue % gridSize - offsetValue) / gridSize);
         for (let pos = offsetValue % gridSize; pos < max; pos += gridSize) {
-            const absPos = pos - offsetValue;
 
             // 判斷是否為粗線
-            const isThickLine = Math.floor(absPos / gridSize) % thickLineInterval === 0;
+            const isThickLine = gridIndex % thickLineInterval === 0
+            gridIndex++
 
             // 設定線條樣式
             ctx.strokeStyle = isThickLine ? thickLineColor : thinLineColor;

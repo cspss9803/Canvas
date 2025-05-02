@@ -13,7 +13,7 @@ import { updateMousePosition, updatePointerDownPosition, updateOffset, updateZoo
 export class CanvasManager {
     canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
-    offset: Vector2 = { x: 0, y: 0 };
+    offset: Vector2 = { x: 200, y: 200 };
     pointerDownPosition: Vector2 = { x: 0, y: 0 };
     zoom: number = 1;
     isClickOnObject = false;

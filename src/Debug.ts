@@ -7,7 +7,6 @@ export function updateOffset( offset: Vector2 ){
 
 export function updateMousePosition( mousePosition: Vector2 ){
     const element = document.getElementById('mousePosition') as HTMLSpanElement
-    console.log(element)
     element.innerHTML = `x: ${mousePosition.x}, y: ${mousePosition.y}`
 }
 

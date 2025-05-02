@@ -9,7 +9,7 @@ import { CoordinateTransformer } from './CoordinateTransformer.js';
 import { updateMousePosition, updatePointerDownPosition, updateOffset, updateZoom, updateWindowsSize } from './Debug.js';
 export class CanvasManager {
     constructor(canvas) {
-        this.offset = { x: 0, y: 0 };
+        this.offset = { x: 200, y: 200 };
         this.pointerDownPosition = { x: 0, y: 0 };
         this.zoom = 1;
         this.isClickOnObject = false;
