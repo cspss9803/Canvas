@@ -7,7 +7,7 @@ import { TransformManager } from './TransformManager.js'
 import { KeyboardManager } from './KeyboardManager.js'
 import { DrawManager } from './DrawManager.js'
 import { EventManager } from './EventManager.js'
-import { InputAdapter } from './InputAdapter.js'
+import { CoordinateTransformer } from './CoordinateTransformer.js'
 import { updateMousePosition, updatePointerDownPosition, updateViewportPosition, updateZoom } from './Debug.js'
 
 export class CanvasManager {
@@ -31,7 +31,7 @@ export class CanvasManager {
     keyboardManager: KeyboardManager
     drawManager: DrawManager
     eventManager: EventManager
-    inputAdapter: InputAdapter
+    coordinateTransformer: CoordinateTransformer
     
     constructor( canvas: HTMLCanvasElement ) {
         this.canvas = canvas;
@@ -43,13 +43,16 @@ export class CanvasManager {
         this.keyboardManager = new KeyboardManager(this);
         this.drawManager = new DrawManager(this);
         this.eventManager = new EventManager(this);
-        this.inputAdapter = new InputAdapter(this);
+        this.coordinateTransformer = new CoordinateTransformer(this);
         this.resizeWindow();
     }
 
     onMouseDown(event: MouseEvent) {
 
-        const worldMousePosition =  this.inputAdapter.getWorldMousePosition(event)
+        const worldMousePosition = this.coordinateTransformer.screenToWorld({
+            x: event.clientX,
+            y: event.clientY
+        });
         this.pointerDownPosition = worldMousePosition;
         updatePointerDownPosition( this.pointerDownPosition );
 
@@ -68,7 +71,10 @@ export class CanvasManager {
     }
 
     onMouseMove(event: MouseEvent) {
-        const worldMousePosition = this.inputAdapter.getWorldMousePosition(event);
+        const worldMousePosition = this.coordinateTransformer.screenToWorld({
+            x: event.clientX,
+            y: event.clientY
+        });
         updateMousePosition(worldMousePosition);
         if (!this.isDragging) return;
         this.selectionManager.updateSelectionArea(worldMousePosition);

@@ -5,7 +5,7 @@ import { TransformManager } from './TransformManager.js';
 import { KeyboardManager } from './KeyboardManager.js';
 import { DrawManager } from './DrawManager.js';
 import { EventManager } from './EventManager.js';
-import { InputAdapter } from './InputAdapter.js';
+import { CoordinateTransformer } from './CoordinateTransformer.js';
 import { updateMousePosition, updatePointerDownPosition, updateViewportPosition, updateZoom } from './Debug.js';
 export class CanvasManager {
     constructor(canvas) {
@@ -30,11 +30,14 @@ export class CanvasManager {
         this.keyboardManager = new KeyboardManager(this);
         this.drawManager = new DrawManager(this);
         this.eventManager = new EventManager(this);
-        this.inputAdapter = new InputAdapter(this);
+        this.coordinateTransformer = new CoordinateTransformer(this);
         this.resizeWindow();
     }
     onMouseDown(event) {
-        const worldMousePosition = this.inputAdapter.getWorldMousePosition(event);
+        const worldMousePosition = this.coordinateTransformer.screenToWorld({
+            x: event.clientX,
+            y: event.clientY
+        });
         this.pointerDownPosition = worldMousePosition;
         updatePointerDownPosition(this.pointerDownPosition);
         if (event.button === MouseButton.Left) {
@@ -49,7 +52,10 @@ export class CanvasManager {
         this.updateCursor();
     }
     onMouseMove(event) {
-        const worldMousePosition = this.inputAdapter.getWorldMousePosition(event);
+        const worldMousePosition = this.coordinateTransformer.screenToWorld({
+            x: event.clientX,
+            y: event.clientY
+        });
         updateMousePosition(worldMousePosition);
         if (!this.isDragging)
             return;
