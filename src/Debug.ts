@@ -1,8 +1,8 @@
 import type { Vector2 } from './types'
 
-export function updateViewportPosition( viewportPosition: Vector2 ){
-    const element = document.getElementById('viewportPosition') as HTMLSpanElement
-    element.innerHTML = `x: ${viewportPosition.x}, y: ${viewportPosition.y}`
+export function updateOffset( offset: Vector2 ){
+    const element = document.getElementById('offset') as HTMLSpanElement
+    element.innerHTML = `x: ${offset.x}, y: ${offset.y}`
 }
 
 export function updateMousePosition( mousePosition: Vector2 ){

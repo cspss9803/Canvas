@@ -6,10 +6,10 @@ import { KeyboardManager } from './KeyboardManager.js';
 import { DrawManager } from './DrawManager.js';
 import { EventManager } from './EventManager.js';
 import { CoordinateTransformer } from './CoordinateTransformer.js';
-import { updateMousePosition, updatePointerDownPosition, updateViewportPosition, updateZoom, updateWindowsSize } from './Debug.js';
+import { updateMousePosition, updatePointerDownPosition, updateOffset, updateZoom, updateWindowsSize } from './Debug.js';
 export class CanvasManager {
     constructor(canvas) {
-        this.viewportPosition = { x: 0, y: 0 };
+        this.offset = { x: 0, y: 0 };
         this.pointerDownPosition = { x: 0, y: 0 };
         this.zoom = 1;
         this.isClickOnObject = false;
@@ -92,7 +92,7 @@ export class CanvasManager {
         // 四捨五入保留小數第三位
         this.zoom = Math.round(newZoom * 1000) / 1000;
         updateZoom(this.zoom);
-        updateViewportPosition(this.viewportPosition);
+        updateOffset(this.offset);
         this.drawManager.draw();
     }
     updateCursor() {

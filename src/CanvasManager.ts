@@ -8,12 +8,12 @@ import { KeyboardManager } from './KeyboardManager.js'
 import { DrawManager } from './DrawManager.js'
 import { EventManager } from './EventManager.js'
 import { CoordinateTransformer } from './CoordinateTransformer.js'
-import { updateMousePosition, updatePointerDownPosition, updateViewportPosition, updateZoom, updateWindowsSize } from './Debug.js'
+import { updateMousePosition, updatePointerDownPosition, updateOffset, updateZoom, updateWindowsSize } from './Debug.js'
 
 export class CanvasManager {
     canvas: HTMLCanvasElement;
     ctx: CanvasRenderingContext2D;
-    viewportPosition: Vector2 = { x: 0, y: 0 };
+    offset: Vector2 = { x: 0, y: 0 };
     pointerDownPosition: Vector2 = { x: 0, y: 0 };
     zoom: number = 1;
     isClickOnObject = false;
@@ -117,7 +117,7 @@ export class CanvasManager {
         this.zoom = Math.round(newZoom * 1000) / 1000;
 
         updateZoom(this.zoom)
-        updateViewportPosition(this.viewportPosition)
+        updateOffset(this.offset)
         this.drawManager.draw();
     }
 

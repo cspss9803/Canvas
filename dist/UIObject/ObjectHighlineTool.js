@@ -1,4 +1,4 @@
-export function drawBoundingBox(ctx, objects, viewportPosition, zoom) {
+export function drawBoundingBox(ctx, objects, offset, zoom) {
     // 如果沒有選取任何物件，則不繪製
     if (objects.length === 0)
         return;
@@ -20,7 +20,7 @@ export function drawBoundingBox(ctx, objects, viewportPosition, zoom) {
         maxX = Math.max(maxX, adjustedBox.x + adjustedBox.width);
         maxY = Math.max(maxY, adjustedBox.y + adjustedBox.height);
         // 繪製單個物件的外框
-        drawRoundedBox(ctx, adjustedBox, viewportPosition, { thickness: 3, radius: 3, color: 'rgb(0, 183, 255)' });
+        drawRoundedBox(ctx, adjustedBox, offset, { thickness: 3, radius: 3, color: 'rgb(0, 183, 255)' });
     }
     // 彙整出來的最終 Bounding Box
     const totalBox = {
@@ -29,14 +29,14 @@ export function drawBoundingBox(ctx, objects, viewportPosition, zoom) {
         width: maxX - minX,
         height: maxY - minY,
     };
-    drawRoundedBox(ctx, totalBox, viewportPosition, { thickness: 3, radius: 3, color: 'rgb(0, 85, 255)' });
+    drawRoundedBox(ctx, totalBox, offset, { thickness: 3, radius: 3, color: 'rgb(0, 85, 255)' });
 }
-function drawRoundedBox(ctx, box, viewportPosition, style) {
+function drawRoundedBox(ctx, box, offset, style) {
     const thickness = style.thickness;
     const radius = style.radius;
     const color = style.color;
     ctx.save();
-    ctx.translate(viewportPosition.x, viewportPosition.y);
+    ctx.translate(offset.x, offset.y);
     ctx.strokeStyle = color;
     ctx.lineWidth = thickness;
     const x = box.x - thickness / 2;

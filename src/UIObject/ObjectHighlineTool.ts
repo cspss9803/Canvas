@@ -4,7 +4,7 @@ import type { Vector2, BoundingBox, BoundingBoxStyle } from '../types.js'
 export function drawBoundingBox(
     ctx: CanvasRenderingContext2D, 
     objects: UIObject[], 
-    viewportPosition: Vector2,
+    offset: Vector2,
     zoom: number
 ) {
     // 如果沒有選取任何物件，則不繪製
@@ -35,7 +35,7 @@ export function drawBoundingBox(
         drawRoundedBox(
             ctx, 
             adjustedBox, 
-            viewportPosition,
+            offset,
             { thickness: 3, radius: 3, color: 'rgb(0, 183, 255)' }
         );
     }
@@ -51,7 +51,7 @@ export function drawBoundingBox(
     drawRoundedBox(
         ctx, 
         totalBox, 
-        viewportPosition,
+        offset,
         { thickness: 3, radius: 3, color: 'rgb(0, 85, 255)' }
     )
 }
@@ -59,14 +59,14 @@ export function drawBoundingBox(
 function drawRoundedBox(
     ctx: CanvasRenderingContext2D,
     box: BoundingBox,
-    viewportPosition: Vector2,
+    offset: Vector2,
     style: BoundingBoxStyle
 ) {
     const thickness = style.thickness
     const radius = style.radius
     const color = style.color
     ctx.save()
-    ctx.translate( viewportPosition.x, viewportPosition.y )
+    ctx.translate( offset.x, offset.y )
     ctx.strokeStyle = color
     ctx.lineWidth = thickness
 

@@ -1,6 +1,6 @@
-export function updateViewportPosition(viewportPosition) {
-    const element = document.getElementById('viewportPosition');
-    element.innerHTML = `x: ${viewportPosition.x}, y: ${viewportPosition.y}`;
+export function updateOffset(offset) {
+    const element = document.getElementById('offset');
+    element.innerHTML = `x: ${offset.x}, y: ${offset.y}`;
 }
 export function updateMousePosition(mousePosition) {
     const element = document.getElementById('mousePosition');

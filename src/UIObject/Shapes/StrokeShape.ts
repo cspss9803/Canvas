@@ -11,9 +11,9 @@ export abstract class StrokeShape extends UIObjectBase {
         super( position );
     }
 
-    draw(ctx: CanvasRenderingContext2D, viewportPosition: Vector2, zoom: number): void {
+    draw(ctx: CanvasRenderingContext2D, offset: Vector2, zoom: number): void {
         ctx.save();
-        ctx.translate(viewportPosition.x, viewportPosition.y);
+        ctx.translate(offset.x, offset.y);
         ctx.scale(zoom, zoom);
         ctx.strokeStyle = this.strokeColor;
         ctx.lineWidth = this.lineWidth;

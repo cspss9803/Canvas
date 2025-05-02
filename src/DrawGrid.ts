@@ -25,7 +25,7 @@ enum Direction { Vertical, Horizontal }
 
 export function drawGrid( 
     context: CanvasRenderingContext2D, 
-    viewportPostiion: Vector2, 
+    offset: Vector2, 
     zoom: number,
     gridSettings: GridSettings = {
         gridSize: 25,
@@ -49,7 +49,7 @@ export function drawGrid(
         const max = isVertical ? canvas.width : canvas.height;
 
         // 計算偏移值，根據當前繪製的方向選擇 x 或 y 偏移值
-        const offsetValue = isVertical ? viewportPostiion.x : viewportPostiion.y;
+        const offsetValue = isVertical ? offset.x : offset.y;
 
         for (let pos = offsetValue % gridSize; pos < max; pos += gridSize) {
             const absPos = pos - offsetValue;

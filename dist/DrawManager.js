@@ -11,13 +11,13 @@ export class DrawManager {
         this.isDrawedInThisFrame = true;
         requestAnimationFrame(() => {
             const ctx = this.canvasManager.ctx;
-            const viewPosition = this.canvasManager.viewportPosition;
+            const offset = this.canvasManager.offset;
             const selectedObjects = this.canvasManager.selectedUIObjects;
             const zoom = this.canvasManager.zoom;
             this.clearCanvas();
-            drawGrid(ctx, viewPosition, zoom);
+            drawGrid(ctx, offset, zoom);
             this.drawObjects();
-            drawBoundingBox(ctx, selectedObjects, viewPosition, zoom);
+            drawBoundingBox(ctx, selectedObjects, offset, zoom);
             this.drawSelectionArea();
             this.isDrawedInThisFrame = false;
         });
@@ -29,22 +29,22 @@ export class DrawManager {
     }
     drawObjects() {
         const ctx = this.canvasManager.ctx;
-        const viewPosition = this.canvasManager.viewportPosition;
+        const offset = this.canvasManager.offset;
         const uiObjects = this.canvasManager.uiObjects;
         const zoom = this.canvasManager.zoom;
         for (const object of uiObjects) {
-            object.draw(ctx, viewPosition, zoom);
+            object.draw(ctx, offset, zoom);
         }
     }
     drawSelectionArea() {
         const ctx = this.canvasManager.ctx;
         const selectionStart = this.canvasManager.selectionStartPoint;
         const selectionEnd = this.canvasManager.selectionEndPoint;
-        const viewportPosition = this.canvasManager.viewportPosition;
+        const offset = this.canvasManager.offset;
         const zoom = this.canvasManager.zoom;
         if (selectionStart && selectionEnd) {
             ctx.save();
-            ctx.translate(viewportPosition.x, viewportPosition.y);
+            ctx.translate(offset.x, offset.y);
             ctx.scale(zoom, zoom);
             ctx.strokeStyle = 'rgb(0, 119, 255)';
             ctx.lineWidth = 0.5;

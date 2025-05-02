@@ -4,9 +4,9 @@ import { UIObjectBase } from '../UIObject.js'
 export abstract class Shape extends UIObjectBase {
     constructor( position: Vector2, public color: Color = '#f00' ) { super(position) }
 
-    draw( ctx: CanvasRenderingContext2D, viewportPosition: Vector2, zoom: number ): void {
+    draw( ctx: CanvasRenderingContext2D, offset: Vector2, zoom: number ): void {
         ctx.save();
-        ctx.translate(viewportPosition.x, viewportPosition.y);
+        ctx.translate(offset.x, offset.y);
         ctx.scale(zoom, zoom);
         ctx.fillStyle = this.color;
         this.renderShape(ctx);

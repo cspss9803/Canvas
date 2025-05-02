@@ -1,5 +1,5 @@
 import { UIObject } from './UIObject/UIObject.js'
-import type { BoundingEdges, BoundingBox, Vector2 } from './types.js'
+import type { BoundingEdges, BoundingBox } from './types.js'
 import { SelectionMode } from './types.js'
 
 /**

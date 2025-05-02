@@ -7,9 +7,9 @@ export class StrokeShape extends UIObjectBase {
         this.lineWidth = lineWidth;
         this.lineDash = lineDash;
     }
-    draw(ctx, viewportPosition, zoom) {
+    draw(ctx, offset, zoom) {
         ctx.save();
-        ctx.translate(viewportPosition.x, viewportPosition.y);
+        ctx.translate(offset.x, offset.y);
         ctx.scale(zoom, zoom);
         ctx.strokeStyle = this.strokeColor;
         ctx.lineWidth = this.lineWidth;

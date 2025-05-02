@@ -4,9 +4,9 @@ export class Shape extends UIObjectBase {
         super(position);
         this.color = color;
     }
-    draw(ctx, viewportPosition, zoom) {
+    draw(ctx, offset, zoom) {
         ctx.save();
-        ctx.translate(viewportPosition.x, viewportPosition.y);
+        ctx.translate(offset.x, offset.y);
         ctx.scale(zoom, zoom);
         ctx.fillStyle = this.color;
         this.renderShape(ctx);
