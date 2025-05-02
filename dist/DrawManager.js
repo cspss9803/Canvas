@@ -1,4 +1,4 @@
-import drawGrid from './DrawGrid.js';
+import { drawGrid } from './DrawGrid.js';
 import { drawBoundingBox } from './UIObject/ObjectHighlineTool.js';
 export class DrawManager {
     constructor(canvasManager) {
@@ -38,8 +38,10 @@ export class DrawManager {
         const ctx = this.canvasManager.ctx;
         const selectionStart = this.canvasManager.selectionStartPoint;
         const selectionEnd = this.canvasManager.selectionEndPoint;
+        const viewportPosition = this.canvasManager.viewportPosition;
         if (selectionStart && selectionEnd) {
             ctx.save();
+            ctx.translate(viewportPosition.x, viewportPosition.y);
             ctx.strokeStyle = 'rgb(0, 119, 255)';
             ctx.lineWidth = 0.5;
             ctx.fillStyle = 'rgba(0, 119, 255, 0.25)';

@@ -10,11 +10,4 @@ export class InputAdapter {
             y: event.clientY - this.canvasManager.viewportPosition.y
         };
     }
-  
-    getScreenMousePosition(event: MouseEvent): Vector2 {
-        return {
-            x: event.clientX,
-            y: event.clientY
-        };
-    }
 }

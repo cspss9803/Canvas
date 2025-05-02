@@ -33,10 +33,10 @@ export class CanvasManager {
         this.resizeWindow();
     }
     onMouseDown(event) {
-        this.pointerDownPosition = this.inputAdapter.getWorldMousePosition(event);
+        const worldMousePosition = this.inputAdapter.getWorldMousePosition(event);
+        this.pointerDownPosition = worldMousePosition;
         if (event.button === MouseButton.Left) {
-            const screenMousePosition = this.inputAdapter.getScreenMousePosition(event);
-            this.selectionManager.startSelect(screenMousePosition, event.shiftKey);
+            this.selectionManager.startSelect(event.shiftKey);
             this.drawManager.draw();
         }
         else if (event.button === MouseButton.Middle) {
@@ -49,10 +49,10 @@ export class CanvasManager {
     onMouseMove(event) {
         if (!this.isDragging)
             return;
-        const screenMousePosition = this.inputAdapter.getScreenMousePosition(event);
-        this.selectionManager.updateSelectionArea(screenMousePosition);
-        this.transformManager.moveSelectedObjects(screenMousePosition);
-        this.viewportManager.moveViewport(screenMousePosition);
+        const worldMousePosition = this.inputAdapter.getWorldMousePosition(event);
+        this.selectionManager.updateSelectionArea(worldMousePosition);
+        this.transformManager.moveSelectedObjects(worldMousePosition);
+        this.viewportManager.moveViewport(worldMousePosition);
         this.drawManager.draw();
     }
     onMouseUp(event) {

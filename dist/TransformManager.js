@@ -1,10 +1,7 @@
 import { InteractionMode } from './types.js';
 export class TransformManager {
     constructor(canvasManager) { this.canvasManager = canvasManager; }
-    moveSelectedObjects(screenMousePosition) {
-        const worldMousePosition = { x: 0, y: 0 };
-        worldMousePosition.x = screenMousePosition.x - this.canvasManager.viewportPosition.x;
-        worldMousePosition.y = screenMousePosition.y - this.canvasManager.viewportPosition.y;
+    moveSelectedObjects(worldMousePosition) {
         if (this.canvasManager.currentInteractionMode !== InteractionMode.Selecting)
             return;
         if (!this.canvasManager.selectionStartPoint) {

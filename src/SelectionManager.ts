@@ -9,7 +9,7 @@ export class SelectionManager {
     canvasManager: CanvasManager
     constructor ( canvasManager: CanvasManager ) { this.canvasManager = canvasManager; }
 
-    startSelect( screenMousePosition: Vector2, usedShift: boolean ){
+    startSelect( usedShift: boolean ){
         if ( this.canvasManager.currentInteractionMode !== InteractionMode.Selecting ) return;
         const canvasManager = this.canvasManager;
 
@@ -17,7 +17,7 @@ export class SelectionManager {
         for ( const object of [...canvasManager.uiObjects].reverse() ) {
 
             // 真的有物件被點擊到的話
-            if ( object.isHit(screenMousePosition, canvasManager.viewportPosition) ) {
+            if ( object.isHit( canvasManager.pointerDownPosition, canvasManager.viewportPosition) ) {
                 canvasManager.isClickOnObject = true;
 
                 // 有按著 Shift 鍵時，點到這物件的話，如果它已被選取就取消選取，反之則進行選取
@@ -27,6 +27,8 @@ export class SelectionManager {
                 else {
                     canvasManager.dragOffsets.clear();
                     if ( !canvasManager.selectedUIObjects.includes(object) ) {
+                        canvasManager.selectedUIObjects.length = 0
+                        canvasManager.selectedUIObjects.push(object)
                         canvasManager.selectedUIObjects = [object];
                     }
 
@@ -52,17 +54,17 @@ export class SelectionManager {
             this.processedInDrag.clear();
 
             // 並且開始選取範圍
-            canvasManager.selectionStartPoint = screenMousePosition;
-            canvasManager.selectionEndPoint = screenMousePosition;
+            canvasManager.selectionStartPoint = canvasManager.pointerDownPosition;
+            canvasManager.selectionEndPoint = canvasManager.pointerDownPosition;
         }
     }
 
-    updateSelectionArea( screenMousePosition: Vector2 ) {
+    updateSelectionArea( worldMousePosition: Vector2 ) {
         if(
             this.canvasManager.currentInteractionMode !== InteractionMode.Selecting ||
             this.canvasManager.selectionStartPoint === null
         ) return;
-        this.canvasManager.selectionEndPoint = screenMousePosition;
+        this.canvasManager.selectionEndPoint = worldMousePosition;
 
         const selectionEdges: BoundingEdges = {
             minX: Math.min( this.canvasManager.selectionStartPoint.x, this.canvasManager.selectionEndPoint.x),
@@ -77,7 +79,6 @@ export class SelectionManager {
             const isInBox = isObjectWouldBeSelected(
                 object,
                 selectionEdges,
-                this.canvasManager.viewportPosition,
                 SelectionMode.Intersect
             );
 

@@ -7,10 +7,7 @@ export class TransformManager {
     canvasManager: CanvasManager
     constructor (canvasManager: CanvasManager){this.canvasManager = canvasManager}
 
-    moveSelectedObjects( screenMousePosition: Vector2 ){
-        const worldMousePosition: Vector2 = { x: 0, y: 0 }
-        worldMousePosition.x = screenMousePosition.x - this.canvasManager.viewportPosition.x;
-        worldMousePosition.y = screenMousePosition.y - this.canvasManager.viewportPosition.y;
+    moveSelectedObjects( worldMousePosition: Vector2 ){
         if( this.canvasManager.currentInteractionMode !== InteractionMode.Selecting ) return;
         if( !this.canvasManager.selectionStartPoint ) {
             for ( const object of this.canvasManager.selectedUIObjects ) {

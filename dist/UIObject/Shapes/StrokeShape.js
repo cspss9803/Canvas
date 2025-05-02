@@ -17,8 +17,6 @@ export class StrokeShape extends UIObjectBase {
         ctx.restore();
     }
     isHit(point, offset) {
-        const localX = point.x - offset.x;
-        const localY = point.y - offset.y;
-        return this.isPointNearStroke(localX, localY);
+        return this.isPointNearStroke(point.x, point.y);
     }
 }
