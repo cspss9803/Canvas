@@ -25,3 +25,8 @@ export function updateZoom( zoom: number ){
     const element = document.getElementById('zoom') as HTMLSpanElement
     element.innerHTML = `${Math.round(zoom * 100)}% (${zoom})`
 }
+
+export function updateWindowsSize( width: number, height: number ){
+    const element = document.getElementById('windowsSize') as HTMLSpanElement
+    element.innerHTML = `${width}px / ${height}px`
+}

@@ -3,7 +3,7 @@ import type { Vector2, BoundingBox } from '../types';
 export interface UIObject {
     position: Vector2;
 
-    draw(ctx: CanvasRenderingContext2D, viewportPosition: Vector2): void;
+    draw(ctx: CanvasRenderingContext2D, viewportPosition: Vector2, zoom:number): void;
     getBoundingBox(): BoundingBox;
     isHit(point: Vector2, viewportPosition: Vector2): boolean;
 
@@ -17,7 +17,7 @@ export interface UIObject {
 export abstract class UIObjectBase implements UIObject {
     constructor(public position: Vector2) {}
 
-    abstract draw(ctx: CanvasRenderingContext2D, viewportPosition: Vector2): void;
+    abstract draw(ctx: CanvasRenderingContext2D, viewportPosition: Vector2, zoom:number): void;
     abstract getBoundingBox(): BoundingBox;
     abstract isHit(point: Vector2, viewportPosition: Vector2): boolean;
 

@@ -7,8 +7,8 @@ export class CoordinateTransformer {
     // 螢幕座標 ➜ 世界座標（用於滑鼠點擊）
     screenToWorld(screen: Vector2): Vector2 {
         return {
-            x: screen.x - this.canvasManager.viewportPosition.x,
-            y: screen.y - this.canvasManager.viewportPosition.y,
+            x: (screen.x - this.canvasManager.viewportPosition.x) / this.canvasManager.zoom,
+            y: (screen.y - this.canvasManager.viewportPosition.y) / this.canvasManager.zoom,
         }
     }
 

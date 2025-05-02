@@ -19,3 +19,7 @@ export function updateZoom(zoom) {
     const element = document.getElementById('zoom');
     element.innerHTML = `${Math.round(zoom * 100)}% (${zoom})`;
 }
+export function updateWindowsSize(width, height) {
+    const element = document.getElementById('windowsSize');
+    element.innerHTML = `${width}px / ${height}px`;
+}

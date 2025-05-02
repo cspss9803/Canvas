@@ -8,7 +8,7 @@ import { KeyboardManager } from './KeyboardManager.js'
 import { DrawManager } from './DrawManager.js'
 import { EventManager } from './EventManager.js'
 import { CoordinateTransformer } from './CoordinateTransformer.js'
-import { updateMousePosition, updatePointerDownPosition, updateViewportPosition, updateZoom } from './Debug.js'
+import { updateMousePosition, updatePointerDownPosition, updateViewportPosition, updateZoom, updateWindowsSize } from './Debug.js'
 
 export class CanvasManager {
     canvas: HTMLCanvasElement;
@@ -100,6 +100,7 @@ export class CanvasManager {
     resizeWindow() {
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
+        updateWindowsSize(this.canvas.width, this.canvas.height);
         this.drawManager.draw();
     }
 
@@ -110,13 +111,13 @@ export class CanvasManager {
         let newZoom = this.zoom + ( isZoomingIn ? ZOOM_PERCENT_STEP : -ZOOM_PERCENT_STEP );
     
         // 限制範圍
-        newZoom = Math.min(4, Math.max(0.1, newZoom));
+        newZoom = Math.min(2, Math.max(0.5, newZoom));
     
         // 四捨五入保留小數第三位
         this.zoom = Math.round(newZoom * 1000) / 1000;
+
         updateZoom(this.zoom)
         updateViewportPosition(this.viewportPosition)
-        console.log(`Zoom: ${this.zoom} (${Math.round(this.zoom * 100)}%)`);
         this.drawManager.draw();
     }
 

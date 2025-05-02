@@ -3,7 +3,7 @@ var Direction;
     Direction[Direction["Vertical"] = 0] = "Vertical";
     Direction[Direction["Horizontal"] = 1] = "Horizontal";
 })(Direction || (Direction = {}));
-export function drawGrid(context, viewportPostiion, gridSettings = {
+export function drawGrid(context, viewportPostiion, zoom, gridSettings = {
     gridSize: 25,
     thinLineColor: '#ddd',
     thinLineWidth: 0.5,
@@ -13,7 +13,8 @@ export function drawGrid(context, viewportPostiion, gridSettings = {
 }) {
     const ctx = context;
     const { canvas } = context;
-    const { gridSize, thinLineColor, thinLineWidth, thickLineColor, thickLineWidth, thickLineInterval } = gridSettings;
+    const { thinLineColor, thinLineWidth, thickLineColor, thickLineWidth, thickLineInterval } = gridSettings;
+    const gridSize = gridSettings.gridSize * zoom;
     function drawLines(direction) {
         const isVertical = direction === Direction.Vertical;
         // 代表畫布的寬度或高度，取決於當前繪製的方向

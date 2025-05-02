@@ -26,6 +26,7 @@ enum Direction { Vertical, Horizontal }
 export function drawGrid( 
     context: CanvasRenderingContext2D, 
     viewportPostiion: Vector2, 
+    zoom: number,
     gridSettings: GridSettings = {
         gridSize: 25,
         thinLineColor: '#ddd',
@@ -38,7 +39,8 @@ export function drawGrid(
     
     const ctx = context;
     const { canvas } = context;
-    const { gridSize, thinLineColor, thinLineWidth, thickLineColor, thickLineWidth, thickLineInterval } = gridSettings;
+    const { thinLineColor, thinLineWidth, thickLineColor, thickLineWidth, thickLineInterval } = gridSettings;
+    const gridSize = gridSettings.gridSize * zoom;
 
     function drawLines(direction: Direction) {
         const isVertical = direction === Direction.Vertical;
