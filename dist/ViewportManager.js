@@ -1,4 +1,5 @@
 import { InteractionMode } from './types.js';
+import { updateViewportPosition } from './Debug.js';
 export class ViewportManager {
     constructor(canvasManager) { this.canvasManager = canvasManager; }
     moveViewport(worldMousePosition) {
@@ -9,5 +10,6 @@ export class ViewportManager {
             return;
         viewportPosition.x += worldMousePosition.x - pointerDownPosition.x;
         viewportPosition.y += worldMousePosition.y - pointerDownPosition.y;
+        updateViewportPosition(viewportPosition);
     }
 }

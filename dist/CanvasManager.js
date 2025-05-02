@@ -6,6 +6,7 @@ import { KeyboardManager } from './KeyboardManager.js';
 import { DrawManager } from './DrawManager.js';
 import { EventManager } from './EventManager.js';
 import { InputAdapter } from './InputAdapter.js';
+import { updateMousePosition, updatePointerDownPosition, updateViewportPosition, updateZoom } from './Debug.js';
 export class CanvasManager {
     constructor(canvas) {
         this.viewportPosition = { x: 0, y: 0 };
@@ -35,6 +36,7 @@ export class CanvasManager {
     onMouseDown(event) {
         const worldMousePosition = this.inputAdapter.getWorldMousePosition(event);
         this.pointerDownPosition = worldMousePosition;
+        updatePointerDownPosition(this.pointerDownPosition);
         if (event.button === MouseButton.Left) {
             this.selectionManager.startSelect(event.shiftKey);
             this.drawManager.draw();
@@ -47,15 +49,17 @@ export class CanvasManager {
         this.updateCursor();
     }
     onMouseMove(event) {
+        const worldMousePosition = this.inputAdapter.getWorldMousePosition(event);
+        updateMousePosition(worldMousePosition);
         if (!this.isDragging)
             return;
-        const worldMousePosition = this.inputAdapter.getWorldMousePosition(event);
         this.selectionManager.updateSelectionArea(worldMousePosition);
         this.transformManager.moveSelectedObjects(worldMousePosition);
         this.viewportManager.moveViewport(worldMousePosition);
         this.drawManager.draw();
     }
     onMouseUp(event) {
+        updatePointerDownPosition(null);
         this.selectionManager.endSelect();
         this.resetInteractionState();
         if (event.button === MouseButton.Middle) {
@@ -80,6 +84,8 @@ export class CanvasManager {
         newZoom = Math.min(4, Math.max(0.1, newZoom));
         // 四捨五入保留小數第三位
         this.zoom = Math.round(newZoom * 1000) / 1000;
+        updateZoom(this.zoom);
+        updateViewportPosition(this.viewportPosition);
         console.log(`Zoom: ${this.zoom} (${Math.round(this.zoom * 100)}%)`);
         this.drawManager.draw();
     }

@@ -8,6 +8,7 @@ import { KeyboardManager } from './KeyboardManager.js'
 import { DrawManager } from './DrawManager.js'
 import { EventManager } from './EventManager.js'
 import { InputAdapter } from './InputAdapter.js'
+import { updateMousePosition, updatePointerDownPosition, updateViewportPosition, updateZoom } from './Debug.js'
 
 export class CanvasManager {
     canvas: HTMLCanvasElement;
@@ -50,6 +51,7 @@ export class CanvasManager {
 
         const worldMousePosition =  this.inputAdapter.getWorldMousePosition(event)
         this.pointerDownPosition = worldMousePosition;
+        updatePointerDownPosition( this.pointerDownPosition );
 
         if (event.button === MouseButton.Left) {
             this.selectionManager.startSelect( event.shiftKey );
@@ -66,8 +68,9 @@ export class CanvasManager {
     }
 
     onMouseMove(event: MouseEvent) {
-        if (!this.isDragging) return;
         const worldMousePosition = this.inputAdapter.getWorldMousePosition(event);
+        updateMousePosition(worldMousePosition);
+        if (!this.isDragging) return;
         this.selectionManager.updateSelectionArea(worldMousePosition);
         this.transformManager.moveSelectedObjects(worldMousePosition);
         this.viewportManager.moveViewport(worldMousePosition);
@@ -75,6 +78,7 @@ export class CanvasManager {
     }
 
     onMouseUp(event: MouseEvent) {
+        updatePointerDownPosition( null );
         this.selectionManager.endSelect()
         this.resetInteractionState();
 
@@ -104,6 +108,8 @@ export class CanvasManager {
     
         // 四捨五入保留小數第三位
         this.zoom = Math.round(newZoom * 1000) / 1000;
+        updateZoom(this.zoom)
+        updateViewportPosition(this.viewportPosition)
         console.log(`Zoom: ${this.zoom} (${Math.round(this.zoom * 100)}%)`);
         this.drawManager.draw();
     }

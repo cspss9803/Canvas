@@ -1,6 +1,7 @@
 import { CanvasManager } from './CanvasManager.js'
 import { InteractionMode } from './types.js'
 import type { Vector2 } from './types'
+import { updateViewportPosition } from './Debug.js'
 
 export class ViewportManager {
 
@@ -15,5 +16,6 @@ export class ViewportManager {
         if ( currentInteractionMode !== InteractionMode.Moving ) return;
         viewportPosition.x += worldMousePosition.x - pointerDownPosition.x;
         viewportPosition.y += worldMousePosition.y - pointerDownPosition.y;
+        updateViewportPosition(viewportPosition);
     }
 }
