@@ -7,7 +7,7 @@ import { KeyboardManager } from './KeyboardManager.js'
 import { DrawManager } from './DrawManager.js'
 import { EventManager } from './EventManager.js'
 import { ViewportManager } from './ViewportManager.js'
-import { updateMousePosition, updatePointerDownPosition, updateOffset, updateZoom, updateWindowsSize } from './Debug.js'
+import { updateMousePosition, updatePointerDownPosition, updateWindowsSize } from './Debug.js'
 
 export class CanvasManager {
     canvas: HTMLCanvasElement;
@@ -43,54 +43,48 @@ export class CanvasManager {
     }
 
     onMouseDown(event: MouseEvent) {
-
-        const worldMousePosition = this.viewPortManager.getMosueWorldPositionByEvent(event);
+        const worldMousePosition = this.viewPortManager.getMouseWorldPositionByEvent( event );
         this.pointerDownPosition = worldMousePosition;
-        updatePointerDownPosition( this.pointerDownPosition );
-        this.viewPortManager.lastScreenPos = { x: event.clientX, y: event.clientY };
-
-        if (event.button === MouseButton.Left) {
+        updatePointerDownPosition( worldMousePosition );
+        this.viewPortManager.startTraceMousePosition( event );
+        if ( event.button === MouseButton.Left ) {
             this.selectionManager.startSelect( event.shiftKey );
             this.drawManager.draw();
         }
-
-        else if (event.button === MouseButton.Middle) {
+        if ( event.button === MouseButton.Middle ) {
             this.previousInteractionMode = this.currentInteractionMode;
             this.currentInteractionMode = InteractionMode.Moving;
         }
-
         this.isDragging = true;
         this.updateCursor();
     }
 
     onMouseMove(event: MouseEvent) {
-        const worldMousePosition = this.viewPortManager.getMosueWorldPositionByEvent(event);
-        updateMousePosition(worldMousePosition);
+        const worldMousePosition = this.viewPortManager.getMouseWorldPositionByEvent( event );
+        updateMousePosition( worldMousePosition );
         if ( !this.isDragging ) return;
-
         if ( this.isMoveMode() ) { this.viewPortManager.pan( event ); } 
-
         if ( this.isSelectMode() ) {
-            this.selectionManager.updateSelectionArea(worldMousePosition);
-            this.transformManager.moveSelectedObjects(worldMousePosition);
+            this.selectionManager.updateSelectionArea( worldMousePosition );
+            this.transformManager.moveSelectedObjects( worldMousePosition );
         }
-        
         this.drawManager.draw();
     }
 
     onMouseUp(event: MouseEvent) {
         updatePointerDownPosition( null );
         this.selectionManager.endSelect();
-        this.viewPortManager.lastScreenPos = null;
+        this.viewPortManager.endTraceMousePosition();
         this.dragOffsets.clear();
         this.isDragging = false;
         this.isClickOnObject = false;
-
-        if (event.button === MouseButton.Middle) {
-            this.currentInteractionMode = this.previousInteractionMode as InteractionMode;
+        if ( 
+            event.button === MouseButton.Middle && 
+            this.previousInteractionMode !== null
+        ) {
+            this.currentInteractionMode = this.previousInteractionMode;
             this.previousInteractionMode = null;
         }
-
         this.updateCursor();
         this.drawManager.draw();
     }
@@ -98,23 +92,24 @@ export class CanvasManager {
     resizeWindow() {
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight;
-        updateWindowsSize(this.canvas.width, this.canvas.height);
+        updateWindowsSize( this.canvas.width, this.canvas.height );
         this.drawManager.draw();
     }
 
     onMouseWheel(event: WheelEvent) {
         if (!event.ctrlKey) return;
-        this.viewPortManager.setZoom(event)
+        this.viewPortManager.setZoom( event );
         this.drawManager.draw();
     }
 
     updateCursor() {
         if ( this.isSelectMode() ) {
-            this.canvas.style.cursor = 'url(./src/assets/select.svg) 0 0, auto'
-        } else if ( this.isMoveMode() ) {
-            this.canvas.style.cursor = this.isDragging 
+            this.canvas.style.cursor = 'url(./src/assets/select.svg) 0 0, auto';
+        }
+        if ( this.isMoveMode() ) {
+            this.canvas.style.cursor = this.isDragging
                 ? 'url(./src/assets/grabbing.svg) 16 16, grabbing'
-                : 'url(./src/assets/hand.svg) 16 16, grab'
+                : 'url(./src/assets/hand.svg) 16 16, grab';
         }
     }
 

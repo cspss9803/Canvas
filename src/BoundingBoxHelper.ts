@@ -29,16 +29,18 @@ export function isObjectWouldBeSelected(
     mode: SelectionMode
 ): boolean {
     const bbox = object.getBoundingBox();
-    const { minX, minY, maxX, maxY } = getBoundingEdges(bbox);
+    const { minX, minY, maxX, maxY } = getBoundingEdges( bbox );
     
-    if (mode === SelectionMode.Inside) {
+    if ( mode === SelectionMode.Inside ) {
         return (
             minX >= selectionEdges.minX &&
             maxX <= selectionEdges.maxX &&
             minY >= selectionEdges.minY &&
             maxY <= selectionEdges.maxY
         );
-    } else { // SelectionMode.Intersect
+    }
+    
+    if ( mode === SelectionMode.Intersect ) {
         return !(
             maxX < selectionEdges.minX || // 物件在選取框左邊
             minX > selectionEdges.maxX || // 物件在選取框右邊
@@ -46,4 +48,6 @@ export function isObjectWouldBeSelected(
             minY > selectionEdges.maxY    // 物件在選取框下方
         );
     }
+
+    return false;
 }

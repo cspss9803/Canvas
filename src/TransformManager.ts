@@ -4,11 +4,13 @@ import type { Vector2 } from './types'
 
 export class TransformManager {
 
-    canvasManager: CanvasManager
-    constructor (canvasManager: CanvasManager){this.canvasManager = canvasManager}
+    canvasManager: CanvasManager;
+    constructor ( canvasManager: CanvasManager ) { 
+        this.canvasManager = canvasManager;
+    }
 
     moveSelectedObjects( worldMousePosition: Vector2 ){
-        if( this.canvasManager.currentInteractionMode !== InteractionMode.Selecting ) return;
+        if( !this.canvasManager.isSelectMode() ) return;
         if( !this.canvasManager.selectionStartPoint ) {
             for ( const object of this.canvasManager.selectedUIObjects ) {
                 const offsetForShape = this.canvasManager.dragOffsets.get(object);

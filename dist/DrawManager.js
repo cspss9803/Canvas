@@ -12,12 +12,12 @@ export class DrawManager {
         requestAnimationFrame(() => {
             const ctx = this.canvasManager.ctx;
             const offset = this.canvasManager.viewPortManager.offset;
-            const selectedObjects = this.canvasManager.selectedUIObjects;
+            const selectedObjs = this.canvasManager.selectedUIObjects;
             const zoom = this.canvasManager.viewPortManager.zoom;
             this.clearCanvas();
             drawGrid(ctx, offset, zoom);
             this.drawObjects();
-            drawBoundingBox(ctx, selectedObjects, offset, zoom);
+            drawBoundingBox(ctx, selectedObjs, offset, zoom);
             this.drawSelectionArea();
             this.isDrawedInThisFrame = false;
         });
@@ -30,29 +30,29 @@ export class DrawManager {
     drawObjects() {
         const ctx = this.canvasManager.ctx;
         const offset = this.canvasManager.viewPortManager.offset;
-        const uiObjects = this.canvasManager.uiObjects;
+        const objects = this.canvasManager.uiObjects;
         const zoom = this.canvasManager.viewPortManager.zoom;
-        for (const object of uiObjects) {
+        for (const object of objects) {
             object.draw(ctx, offset, zoom);
         }
     }
     drawSelectionArea() {
         const ctx = this.canvasManager.ctx;
-        const selectionStart = this.canvasManager.selectionStartPoint;
-        const selectionEnd = this.canvasManager.selectionEndPoint;
+        const start = this.canvasManager.selectionStartPoint;
+        const end = this.canvasManager.selectionEndPoint;
         const offset = this.canvasManager.viewPortManager.offset;
         const zoom = this.canvasManager.viewPortManager.zoom;
-        if (selectionStart && selectionEnd) {
+        if (start && end) {
             ctx.save();
             ctx.translate(offset.x, offset.y);
             ctx.scale(zoom, zoom);
             ctx.strokeStyle = 'rgb(0, 119, 255)';
             ctx.lineWidth = 0.5;
             ctx.fillStyle = 'rgba(0, 119, 255, 0.25)';
-            const x = Math.min(selectionStart.x, selectionEnd.x);
-            const y = Math.min(selectionStart.y, selectionEnd.y);
-            const w = Math.abs(selectionStart.x - selectionEnd.x);
-            const h = Math.abs(selectionStart.y - selectionEnd.y);
+            const x = Math.min(start.x, end.x);
+            const y = Math.min(start.y, end.y);
+            const w = Math.abs(start.x - end.x);
+            const h = Math.abs(start.y - end.y);
             ctx.fillRect(x, y, w, h);
             ctx.strokeRect(x, y, w, h);
             ctx.restore();

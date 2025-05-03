@@ -2,7 +2,7 @@ import type { Vector2 } from './types'
 
 export function updateOffset( offset: Vector2 ){
     const element = document.getElementById('offset') as HTMLSpanElement
-    element.innerHTML = `x: ${offset.x}, y: ${offset.y}`
+    element.innerHTML = `x: ${offset.x}px, y: ${offset.y}px`
 }
 
 export function updateMousePosition( mousePosition: Vector2 ){

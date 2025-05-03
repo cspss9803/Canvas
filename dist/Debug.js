@@ -1,6 +1,6 @@
 export function updateOffset(offset) {
     const element = document.getElementById('offset');
-    element.innerHTML = `x: ${offset.x}, y: ${offset.y}`;
+    element.innerHTML = `x: ${offset.x}px, y: ${offset.y}px`;
 }
 export function updateMousePosition(mousePosition) {
     const element = document.getElementById('mousePosition');

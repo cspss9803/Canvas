@@ -4,25 +4,29 @@ export class KeyboardManager {
         this.canvasManager = canvasManager;
     }
     handleKeyboardInput(code) {
+        const canvasManager = this.canvasManager;
+        const selectedObjes = canvasManager.selectedUIObjects;
+        const objects = canvasManager.uiObjects;
+        const drawManager = this.canvasManager.drawManager;
         if (code === 'KeyV') {
-            this.canvasManager.currentInteractionMode = InteractionMode.Selecting;
-            this.canvasManager.updateCursor();
+            canvasManager.currentInteractionMode = InteractionMode.Selecting;
+            canvasManager.updateCursor();
         }
         if (code === 'KeyH') {
-            this.canvasManager.currentInteractionMode = InteractionMode.Moving;
-            this.canvasManager.updateCursor();
+            canvasManager.currentInteractionMode = InteractionMode.Moving;
+            canvasManager.updateCursor();
         }
         if (code === 'Delete') {
-            if (this.canvasManager.selectedUIObjects.length > 0) {
-                for (const object of this.canvasManager.selectedUIObjects) {
-                    const index = this.canvasManager.uiObjects.indexOf(object);
+            if (selectedObjes.length > 0) {
+                for (const object of selectedObjes) {
+                    const index = objects.indexOf(object);
                     if (index !== -1) {
-                        this.canvasManager.uiObjects.splice(index, 1);
+                        objects.splice(index, 1);
                     }
                 }
-                this.canvasManager.selectedUIObjects = [];
+                selectedObjes.length = 0;
             }
-            this.canvasManager.drawManager.draw();
+            drawManager.draw();
         }
     }
 }
