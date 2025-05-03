@@ -11,9 +11,9 @@ export class DrawManager {
         this.isDrawedInThisFrame = true;
         requestAnimationFrame(() => {
             const ctx = this.canvasManager.ctx;
-            const offset = this.canvasManager.offset;
+            const offset = this.canvasManager.viewPortManager.offset;
             const selectedObjects = this.canvasManager.selectedUIObjects;
-            const zoom = this.canvasManager.zoom;
+            const zoom = this.canvasManager.viewPortManager.zoom;
             this.clearCanvas();
             drawGrid(ctx, offset, zoom);
             this.drawObjects();
@@ -29,9 +29,9 @@ export class DrawManager {
     }
     drawObjects() {
         const ctx = this.canvasManager.ctx;
-        const offset = this.canvasManager.offset;
+        const offset = this.canvasManager.viewPortManager.offset;
         const uiObjects = this.canvasManager.uiObjects;
-        const zoom = this.canvasManager.zoom;
+        const zoom = this.canvasManager.viewPortManager.zoom;
         for (const object of uiObjects) {
             object.draw(ctx, offset, zoom);
         }
@@ -40,8 +40,8 @@ export class DrawManager {
         const ctx = this.canvasManager.ctx;
         const selectionStart = this.canvasManager.selectionStartPoint;
         const selectionEnd = this.canvasManager.selectionEndPoint;
-        const offset = this.canvasManager.offset;
-        const zoom = this.canvasManager.zoom;
+        const offset = this.canvasManager.viewPortManager.offset;
+        const zoom = this.canvasManager.viewPortManager.zoom;
         if (selectionStart && selectionEnd) {
             ctx.save();
             ctx.translate(offset.x, offset.y);

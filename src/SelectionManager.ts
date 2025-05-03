@@ -17,7 +17,7 @@ export class SelectionManager {
         for ( const object of [...canvasManager.uiObjects].reverse() ) {
 
             // 真的有物件被點擊到的話
-            if ( object.isHit( canvasManager.pointerDownPosition, canvasManager.offset) ) {
+            if ( object.isHit( canvasManager.pointerDownPosition, canvasManager.viewPortManager.offset) ) {
                 canvasManager.isClickOnObject = true;
 
                 // 有按著 Shift 鍵時，點到這物件的話，如果它已被選取就取消選取，反之則進行選取
