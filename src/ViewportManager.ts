@@ -1,6 +1,6 @@
-import { CanvasManager } from './CanvasManager.js'
-import type { Vector2 } from './types'
-import { updateOffset, updateZoom } from './Debug.js'
+import { CanvasManager } from './CanvasManager.js';
+import type { Vector2 } from './types';
+import { updateOffset, updateZoom } from './Debug.js';
 
 export class ViewportManager {
 
@@ -13,10 +13,10 @@ export class ViewportManager {
         this.canvasManager = canvasManager;
     }
 
-    screenToWorld(screen: Vector2): Vector2 {
+    screenToWorld( screen: Vector2 ): Vector2 {
         return {
-            x: Math.round((screen.x - this.offset.x) / this.zoom),
-            y: Math.round((screen.y - this.offset.y) / this.zoom)
+            x: Math.round( ( screen.x - this.offset.x ) / this.zoom ),
+            y: Math.round( ( screen.y - this.offset.y ) / this.zoom )
         };
     }
 
@@ -43,26 +43,28 @@ export class ViewportManager {
             this.offset.x += event.clientX - this.lastScreenPos.x;
             this.offset.y += event.clientY - this.lastScreenPos.y;
             this.lastScreenPos = { x: event.clientX, y: event.clientY };
-            updateOffset(this.offset);
+            updateOffset( this.offset );
         }
     }
 
     setZoom( event: WheelEvent) {
-        if (!event.ctrlKey) return;
+        if ( !event.ctrlKey ) return;
         
         // 紀錄滑鼠的「螢幕座標」
         const screenMousePos = { x: event.clientX, y: event.clientY };
 
         // 紀錄這個「螢幕座標」在縮放之前的「世界座標」
-        const worldMousePosBefore = this.screenToWorld(screenMousePos);
+        const worldMousePosBefore = this.screenToWorld( screenMousePos );
 
         // 計算新縮放值
         const ZOOM_STEP = 0.05; // 每次調整 5% 的縮放
         const isZoomingIn = event.deltaY < 0; // 上滾是放大，deltaY 為負
+        const MAX_ZOOM = 4;
+        const MIN_ZOOM = 0.1;
         let newZoom = this.zoom + ( isZoomingIn ? ZOOM_STEP : -ZOOM_STEP );
-        newZoom = Math.min(4, Math.max(0.1, newZoom));
-        this.zoom = Math.round(newZoom * 1000) / 1000;
-        updateZoom(this.zoom);
+        newZoom = Math.min( MAX_ZOOM, Math.max( MIN_ZOOM, newZoom ) );
+        this.zoom = Math.round( newZoom * 1000 ) / 1000;
+        updateZoom( this.zoom );
 
         // 計算出，在調整 zoom 之後，滑鼠的「世界座標」會在螢幕上的哪個位置
         const newScreenPosOfWorldMousePos = {

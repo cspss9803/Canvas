@@ -11,22 +11,26 @@ export abstract class StrokeShape extends UIObjectBase {
         super( position );
     }
 
-    draw(ctx: CanvasRenderingContext2D, offset: Vector2, zoom: number): void {
+    draw( 
+        ctx: CanvasRenderingContext2D, 
+        offset: Vector2, 
+        zoom: number 
+    ): void {
         ctx.save();
-        ctx.translate(offset.x, offset.y);
-        ctx.scale(zoom, zoom);
+        ctx.translate( offset.x, offset.y );
+        ctx.scale( zoom, zoom );
         ctx.strokeStyle = this.strokeColor;
         ctx.lineWidth = this.lineWidth;
-        ctx.setLineDash(this.lineDash);
-        this.renderStroke(ctx);
+        ctx.setLineDash( this.lineDash );
+        this.renderStroke( ctx );
         ctx.restore();
     }
 
-    isHit(point: Vector2 ): boolean {
-        return this.isPointNearStroke(point.x, point.y);
+    isHit( point: Vector2 ): boolean {
+        return this.isPointNearStroke( point.x, point.y );
     }
 
-    protected abstract renderStroke(ctx: CanvasRenderingContext2D): void;
-    protected abstract isPointNearStroke(x: number, y: number): boolean;
+    protected abstract renderStroke( ctx: CanvasRenderingContext2D ): void;
+    protected abstract isPointNearStroke( x: number, y: number ): boolean;
     abstract getBoundingBox(): BoundingBox;
 }

@@ -47,7 +47,7 @@ export class DrawManager {
             ctx.translate(offset.x, offset.y);
             ctx.scale(zoom, zoom);
             ctx.strokeStyle = 'rgb(0, 119, 255)';
-            ctx.lineWidth = 0.5;
+            ctx.lineWidth = 1.5;
             ctx.fillStyle = 'rgba(0, 119, 255, 0.25)';
             const x = Math.min(start.x, end.x);
             const y = Math.min(start.y, end.y);

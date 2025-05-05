@@ -9,7 +9,6 @@ import { updateMousePosition, updatePointerDownPosition, updateWindowsSize } fro
 export class CanvasManager {
     constructor(canvas) {
         this.pointerDownPosition = { x: 0, y: 0 };
-        this.isClickOnObject = false;
         this.isDragging = false;
         this.dragOffsets = new Map();
         this.selectionStartPoint = null;
@@ -65,7 +64,6 @@ export class CanvasManager {
         this.viewPortManager.endTraceMousePosition();
         this.dragOffsets.clear();
         this.isDragging = false;
-        this.isClickOnObject = false;
         if (event.button === MouseButton.Middle &&
             this.previousInteractionMode !== null) {
             this.currentInteractionMode = this.previousInteractionMode;

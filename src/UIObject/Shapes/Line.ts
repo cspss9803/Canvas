@@ -4,35 +4,44 @@ import { StrokeShape } from './StrokeShape.js';
 export class Line extends StrokeShape {
     constructor(
         position: Vector2,
-        public points: Vector2[], // 中繼點，不包含起點，僅中繼到終點
+        public points: Vector2[], // 相對於 position 的中繼點
         strokeColor?: Color,
         lineWidth?: number,
         lineDash?: number[]
     ) {
-        super(position, strokeColor, lineWidth, lineDash);
+        super( position, strokeColor, lineWidth, lineDash );
     }
 
-    protected renderStroke(ctx: CanvasRenderingContext2D): void {
+    protected renderStroke( ctx: CanvasRenderingContext2D ): void {
         ctx.beginPath();
-        ctx.moveTo(this.position.x, this.position.y);
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.moveTo( this.position.x, this.position.y );
 
-        for (const point of this.points) {
-            ctx.lineTo(point.x, point.y);
+        for ( const point of this.points ) {
+            ctx.lineTo( this.position.x + point.x, this.position.y + point.y );
         }
 
         ctx.stroke();
     }
 
-    protected isPointNearStroke(x: number, y: number): boolean {
-        const threshold = this.lineWidth + 4; // 容許點在線附近幾個像素內
-        
+    protected isPointNearStroke( x: number, y: number ): boolean {
+        const threshold = this.lineWidth + 4;
+
         let prev = this.position;
-        for (const point of this.points) {
-            if (this.isPointNearSegment(x, y, prev, point, threshold)) {
+        for ( const offset of this.points ) {
+            const curr: Vector2 = {
+                x: this.position.x + offset.x,
+                y: this.position.y + offset.y
+            };
+
+            if ( this.isPointNearSegment( x, y, prev, curr, threshold ) ) {
                 return true;
             }
-            prev = point;
+
+            prev = curr;
         }
+
         return false;
     }
 
@@ -46,36 +55,36 @@ export class Line extends StrokeShape {
         const lengthSquared = dx * dx + dy * dy;
 
         if (lengthSquared === 0) {
-            // p1和p2是同一點
-            const dist = Math.hypot(px - p1.x, py - p1.y);
+            const dist = Math.hypot( px - p1.x, py - p1.y );
             return dist <= threshold;
         }
 
-        // 投影點到線段上
-        let t = ((px - p1.x) * dx + (py - p1.y) * dy) / lengthSquared;
-        t = Math.max(0, Math.min(1, t));
+        let t = ( ( px - p1.x ) * dx + ( py - p1.y ) * dy ) / lengthSquared;
+        t = Math.max( 0, Math.min( 1, t ) );
         const projX = p1.x + t * dx;
         const projY = p1.y + t * dy;
 
-        const dist = Math.hypot(px - projX, py - projY);
+        const dist = Math.hypot( px - projX, py - projY );
         return dist <= threshold;
     }
 
     getBoundingBox(): BoundingBox {
-        const allPoints = [this.position, ...this.points];
-        const xs = allPoints.map(p => p.x);
-        const ys = allPoints.map(p => p.y);
+        const worldPoints = [
+            this.position,
+            ...this.points.map(p => ({
+                x: this.position.x + p.x,
+                y: this.position.y + p.y
+            }))
+        ];
 
-        const minX = Math.min(...xs);
-        const minY = Math.min(...ys);
-        const maxX = Math.max(...xs);
-        const maxY = Math.max(...ys);
+        const xs = worldPoints.map( p => p.x );
+        const ys = worldPoints.map( p => p.y );
 
         return {
-            x: minX,
-            y: minY,
-            width: maxX - minX,
-            height: maxY - minY
+            x: Math.min( ...xs ),
+            y: Math.min( ...ys ),
+            width: Math.max( ...xs ) - Math.min( ...xs ),
+            height: Math.max( ...ys ) - Math.min( ...ys )
         };
     }
 }

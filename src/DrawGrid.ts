@@ -3,25 +3,25 @@ import type { Color, Vector2 } from './types';
 export interface GridSettings {
 
     /** 網格大小 */
-    gridSize: number
+    gridSize: number;
 
     /** 細線顏色 */
-    thinLineColor: Color
+    thinLineColor: Color;
 
     /** 細線寬度 */
-    thinLineWidth: number
+    thinLineWidth: number;
 
     /** 粗線顏色 */
-    thickLineColor: Color
+    thickLineColor: Color;
 
     /** 粗線寬度 */
-    thickLineWidth: number
+    thickLineWidth: number;
 
     /** 每多少格繪制一條粗線 */
-    thickLineInterval: number
+    thickLineInterval: number;
 }
 
-enum Direction { Vertical, Horizontal }
+enum Direction { Vertical, Horizontal };
 
 export function drawGrid( 
     context: CanvasRenderingContext2D, 
@@ -39,10 +39,16 @@ export function drawGrid(
     
     const ctx = context;
     const { canvas } = context;
-    const { thinLineColor, thinLineWidth, thickLineColor, thickLineWidth, thickLineInterval } = gridSettings;
+    const { 
+        thinLineColor, 
+        thinLineWidth, 
+        thickLineColor, 
+        thickLineWidth, 
+        thickLineInterval 
+    } = gridSettings;
     const gridSize = Math.round( gridSettings.gridSize * zoom * 100 ) / 100;
 
-    function drawLines(direction: Direction) {
+    function drawLines( direction: Direction ) {
         const isVertical = direction === Direction.Vertical;
 
         // 代表畫布的寬度或高度，取決於當前繪製的方向
@@ -51,7 +57,7 @@ export function drawGrid(
         // 計算偏移值，根據當前繪製的方向選擇 x 或 y 偏移值
         const offsetValue = isVertical ? offset.x : offset.y;
 
-        let gridIndex = Math.floor(( offsetValue % gridSize - offsetValue ) / gridSize);
+        let gridIndex = Math.floor( ( offsetValue % gridSize - offsetValue ) / gridSize );
         for (
             let pos = offsetValue % gridSize; 
             pos < max; 
@@ -71,8 +77,8 @@ export function drawGrid(
 
             // 如果是垂直線，則繪製垂直線
             if ( isVertical ) {
-                ctx.moveTo(pos, 0);
-                ctx.lineTo(pos, canvas.height);
+                ctx.moveTo( pos, 0 );
+                ctx.lineTo( pos, canvas.height );
             } 
             
             // 如果是水平線，則繪製水平線

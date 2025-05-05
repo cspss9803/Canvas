@@ -3,6 +3,7 @@ var Direction;
     Direction[Direction["Vertical"] = 0] = "Vertical";
     Direction[Direction["Horizontal"] = 1] = "Horizontal";
 })(Direction || (Direction = {}));
+;
 export function drawGrid(context, offset, zoom, gridSettings = {
     gridSize: 25,
     thinLineColor: '#ddd',

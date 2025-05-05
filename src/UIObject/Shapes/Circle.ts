@@ -1,5 +1,5 @@
-import type { Color, Vector2, BoundingBox } from '../../types'
-import { Shape } from './Shape.js'
+import type { Color, Vector2, BoundingBox } from '../../types';
+import { Shape } from './Shape.js';
 
 export class Circle extends Shape {
     constructor(
@@ -7,18 +7,18 @@ export class Circle extends Shape {
         public radius: number,
         color?: Color
     ) {
-        super(position, color);
+        super( position, color );
     }
 
     protected renderShape( ctx: CanvasRenderingContext2D ): void {
 
-        const { x, y } = this.position
-        const { radius } = this
-        const startAngle = 0
-        const endAngle = Math.PI * 2
+        const { x, y } = this.position;
+        const { radius } = this;
+        const startAngle = 0;
+        const endAngle = Math.PI * 2;
 
-        ctx.beginPath()
-        ctx.arc( x, y, radius, startAngle, endAngle)
+        ctx.beginPath();
+        ctx.arc( x, y, radius, startAngle, endAngle );
         ctx.fill()
 
     }

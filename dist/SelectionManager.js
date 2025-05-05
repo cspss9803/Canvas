@@ -1,9 +1,10 @@
 import { SelectionMode } from './types.js';
-import { isObjectWouldBeSelected } from './BoundingBoxHelper.js';
+import { isObjectWouldBeSelected, getTotalBoundingBox, isPointInBoundingBox } from './BoundingBoxHelper.js';
 export class SelectionManager {
     constructor(canvasManager) {
         this.selectionSnapshot = new Set();
         this.processedInDrag = new Set();
+        this.isClickOnObject = false;
         this.canvasManager = canvasManager;
     }
     startSelect(usedShift) {
@@ -15,35 +16,37 @@ export class SelectionManager {
         const mouseDownPoint = canvasManager.pointerDownPosition;
         const offset = canvasManager.viewPortManager.offset;
         const dragOffsets = canvasManager.dragOffsets;
+        this.isClickOnObject = false;
         // 從頂到底開始尋找被點擊到的物件
         for (const object of [...objects].reverse()) {
             // 真的有物件被點擊到的話
             if (object.isHit(mouseDownPoint, offset)) {
-                canvasManager.isClickOnObject = true;
+                this.isClickOnObject = true;
                 // 有按著 Shift 鍵時，點到這物件的話，如果它已被選取就取消選取，反之則進行選取
                 if (usedShift) {
                     this.toggleSelection(object);
                 }
                 // 在沒按著 Shift 鍵時，點到這個物件的話
                 else {
-                    dragOffsets.clear();
+                    // 單選某個物件
                     if (!selectedObjs.includes(object)) {
                         selectedObjs.length = 0;
                         selectedObjs.push(object);
                     }
                     // 初始化拖曳偏移量
-                    for (const object of selectedObjs) {
-                        dragOffsets.set(object, {
-                            x: mouseDownPoint.x - object.position.x,
-                            y: mouseDownPoint.y - object.position.y,
-                        });
-                    }
+                    this.initDragOffsets(mouseDownPoint);
                 }
                 break;
             }
         }
+        const totalBoundingBox = getTotalBoundingBox(selectedObjs);
+        if (totalBoundingBox !== null &&
+            isPointInBoundingBox(mouseDownPoint, totalBoundingBox)) {
+            this.isClickOnObject = true;
+            this.initDragOffsets(mouseDownPoint);
+        }
         // 如果按下的位置剛好在空白處
-        if (!canvasManager.isClickOnObject) {
+        if (!this.isClickOnObject) {
             if (!usedShift) {
                 selectedObjs.length = 0; // 才能清空選取的物件
                 dragOffsets.clear(); // 同時也清空拖曳偏移量
@@ -112,6 +115,16 @@ export class SelectionManager {
         }
         else {
             selectedUIObjects.push(object);
+        }
+    }
+    initDragOffsets(mouseDownPoint) {
+        const dragOffsets = this.canvasManager.dragOffsets;
+        dragOffsets.clear();
+        for (const object of this.canvasManager.selectedUIObjects) {
+            dragOffsets.set(object, {
+                x: mouseDownPoint.x - object.position.x,
+                y: mouseDownPoint.y - object.position.y,
+            });
         }
     }
 }

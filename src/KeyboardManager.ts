@@ -1,5 +1,5 @@
-import { CanvasManager } from './CanvasManager.js'
-import { InteractionMode } from './types.js'
+import { CanvasManager } from './CanvasManager.js';
+import { InteractionMode } from './types.js';
 
 export class KeyboardManager {
 

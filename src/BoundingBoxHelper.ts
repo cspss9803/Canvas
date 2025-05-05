@@ -1,5 +1,5 @@
 import { UIObject } from './UIObject/UIObject.js'
-import type { BoundingEdges, BoundingBox } from './types.js'
+import type { BoundingEdges, BoundingBox, Vector2 } from './types.js'
 import { SelectionMode } from './types.js'
 
 /**
@@ -50,4 +50,61 @@ export function isObjectWouldBeSelected(
     }
 
     return false;
+}
+
+export function isPointInsideTotalBoundingBox(
+    selectedObjs: UIObject[], 
+    point: Vector2
+): boolean {
+
+    if ( selectedObjs.length === 0 ) return false;
+
+    let minX = Infinity;
+    let minY = Infinity;
+    let maxX = -Infinity;
+    let maxY = -Infinity;
+
+    for (const obj of selectedObjs) {
+        const box = obj.getBoundingBox();
+
+        minX = Math.min(minX, box.x);
+        minY = Math.min(minY, box.y);
+        maxX = Math.max(maxX, box.x + box.width);
+        maxY = Math.max(maxY, box.y + box.height);
+    }
+
+    return (
+        point.x >= minX &&
+        point.x <= maxX &&
+        point.y >= minY &&
+        point.y <= maxY
+    );
+}
+
+export function getTotalBoundingBox( objs: UIObject[] ): BoundingEdges | null {
+    if ( objs.length === 0 ) return null;
+
+    let minX = Infinity;
+    let minY = Infinity;
+    let maxX = -Infinity;
+    let maxY = -Infinity;
+
+    for ( const obj of objs ) {
+        const box = obj.getBoundingBox();
+        minX = Math.min( minX, box.x );
+        minY = Math.min( minY, box.y );
+        maxX = Math.max( maxX, box.x + box.width );
+        maxY = Math.max( maxY, box.y + box.height );
+    }
+
+    return { minX, minY, maxX, maxY };
+}
+
+export function isPointInBoundingBox( point: Vector2, box: BoundingEdges ): boolean {
+    return (
+        point.x >= box.minX &&
+        point.x <= box.maxX &&
+        point.y >= box.minY &&
+        point.y <= box.maxY
+    );
 }

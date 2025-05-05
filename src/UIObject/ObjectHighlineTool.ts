@@ -1,5 +1,5 @@
-import type { UIObject } from './UIObject.js'
-import type { Vector2, BoundingBox, BoundingBoxStyle } from '../types.js'
+import type { UIObject } from './UIObject.js';
+import type { Vector2, BoundingBox, BoundingBoxStyle } from '../types.js';
 
 export function drawBoundingBox(
     ctx: CanvasRenderingContext2D, 

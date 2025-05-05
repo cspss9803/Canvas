@@ -1,5 +1,5 @@
-import type { Color, Vector2, BoundingBox, BoxSize } from '../../types'
-import { Shape } from './Shape.js'
+import type { Color, Vector2, BoundingBox, BoxSize } from '../../types';
+import { Shape } from './Shape.js';
 
 export class Box extends Shape {
     constructor( 
@@ -7,7 +7,7 @@ export class Box extends Shape {
         public size: BoxSize, 
         color?: Color 
     ) { 
-        super(position, color) 
+        super( position, color );
     }
 
     protected renderShape(ctx: CanvasRenderingContext2D): void {
