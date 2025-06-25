@@ -3,7 +3,6 @@ import { isObjectWouldBeSelected, getTotalBoundingBox, isPointInBoundingBox } fr
 export class SelectionManager {
     constructor(canvasManager) {
         this.selectionSnapshot = new Set();
-        this.processedInDrag = new Set();
         this.isClickOnObject = false;
         this.canvasManager = canvasManager;
     }
@@ -52,7 +51,6 @@ export class SelectionManager {
                 dragOffsets.clear(); // 同時也清空拖曳偏移量
             }
             this.selectionSnapshot = new Set(selectedObjs);
-            this.processedInDrag.clear();
             // 並且開始選取範圍
             canvasManager.selectionStartPoint = mouseDownPoint;
             canvasManager.selectionEndPoint = mouseDownPoint;
@@ -104,7 +102,6 @@ export class SelectionManager {
     endSelect() {
         this.canvasManager.selectionStartPoint = null;
         this.canvasManager.selectionEndPoint = null;
-        this.processedInDrag.clear();
         this.selectionSnapshot.clear();
     }
     toggleSelection(object) {
@@ -122,6 +119,7 @@ export class SelectionManager {
         dragOffsets.clear();
         for (const object of this.canvasManager.selectedUIObjects) {
             dragOffsets.set(object, {
+                // 紀錄滑鼠是從物件上的哪個位置開始拖的
                 x: mouseDownPoint.x - object.position.x,
                 y: mouseDownPoint.y - object.position.y,
             });

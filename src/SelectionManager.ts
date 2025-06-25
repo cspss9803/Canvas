@@ -8,7 +8,6 @@ export class SelectionManager {
 
     canvasManager: CanvasManager;
     private selectionSnapshot: Set<UIObject> = new Set();
-    private processedInDrag: Set<UIObject> = new Set();
     private isClickOnObject: boolean = false;
 
     constructor ( canvasManager: CanvasManager ) { 
@@ -67,7 +66,6 @@ export class SelectionManager {
             }
 
             this.selectionSnapshot = new Set( selectedObjs );
-            this.processedInDrag.clear();
 
             // 並且開始選取範圍
             canvasManager.selectionStartPoint = mouseDownPoint;
@@ -132,7 +130,6 @@ export class SelectionManager {
     endSelect() {
         this.canvasManager.selectionStartPoint = null;
         this.canvasManager.selectionEndPoint = null;
-        this.processedInDrag.clear();
         this.selectionSnapshot.clear();
     }
 
@@ -144,10 +141,11 @@ export class SelectionManager {
     }
 
     private initDragOffsets( mouseDownPoint: Vector2 ) {
-        const dragOffsets = this.canvasManager.dragOffsets;
+        const dragOffsets = this.canvasManager.dragOffsets as Map<UIObject, Vector2>;
         dragOffsets.clear();
         for ( const object of this.canvasManager.selectedUIObjects ) {
             dragOffsets.set(object, {
+                // 紀錄滑鼠是從物件上的哪個位置開始拖的
                 x: mouseDownPoint.x - object.position.x,
                 y: mouseDownPoint.y - object.position.y,
             });
